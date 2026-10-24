@@ -69,7 +69,7 @@
 **Files:**
 - Create: `insurance-platform-poc/experiments/00-baseline.md`
 
-- [ ] **Step 1: 부품 수 집계**
+- [x] **Step 1: 부품 수 집계**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc
@@ -90,7 +90,7 @@ gh api "/user/packages?package_type=maven" --jq '.[] | "\(.repository.name) \(.n
 ```
 Expected: 네 레포의 숫자. 참고치(Phase 1 기록): A 모듈 6, 컨벤션 2, 워크플로 2, Kustomize 11, `.kt` 30파일 786줄. B 플랫폼 모듈 3, 템플릿 모듈 5. C 플랫폼 모듈 3 + 템플릿 5 + 스크립트 1.
 
-- [ ] **Step 2: 파일 작성**
+- [x] **Step 2: 파일 작성**
 
 `experiments/00-baseline.md`. `<n>`은 Step 1의 값으로 채운다.
 
@@ -133,7 +133,7 @@ Expected: 네 레포의 숫자. 참고치(Phase 1 기록): A 모듈 6, 컨벤션
 <Step 1 명령 블록 그대로>
 ```
 
-- [ ] **Step 3: 커밋**
+- [x] **Step 3: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -152,7 +152,7 @@ git commit -q -m "Record baseline platform part counts"
 **Interfaces:**
 - Produces: `Contract(id, holderName, beneficiary, insuredAmount, startDate, endDate, status)`, `Contract.changeBeneficiary(newBeneficiary: String): Contract`, `ContractEventType.BENEFICIARY_CHANGED`, `ContractEvent(eventId, contractId, type, beneficiary: String? = null)`. 실험 3의 api 변경은 이 위에서 이루어진다
 
-- [ ] **Step 1: 브랜치와 실패하는 테스트**
+- [x] **Step 1: 브랜치와 실패하는 테스트**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -199,7 +199,7 @@ git checkout -q -b beneficiary
         assertThat(read).bodyJson().extractingPath("$.beneficiary").isEqualTo("Park")
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -208,7 +208,7 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 25)
 ```
 Expected: `e: ... Too many arguments` 또는 `Unresolved reference 'changeBeneficiary'` 류의 컴파일 오류, `BUILD FAILED`.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `Contract.kt` 전체:
 
@@ -292,7 +292,7 @@ data class CreateContractRequest(
                 repository.save(repository.findById(event.contractId).changeBeneficiary(requireNotNull(event.beneficiary)))
 ```
 
-- [ ] **Step 4: 전체 빌드**
+- [x] **Step 4: 전체 빌드**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -303,7 +303,7 @@ git status --short | wc -l
 ```
 Expected: `BUILD SUCCESSFUL`, 테스트 `28`(25 + domain 2 + consumer 1), 변경 파일 `8`.
 
-- [ ] **Step 5: PR 생성·CI·머지**
+- [x] **Step 5: PR 생성·CI·머지**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -320,7 +320,7 @@ git log --oneline | head -2
 ```
 Expected: CI 체크 `pass`, `files=8`, 머지 커밋이 main에.
 
-- [ ] **Step 6: 기록**
+- [x] **Step 6: 기록**
 
 `experiments/02-multi-app-pr.md`:
 
@@ -370,7 +370,7 @@ git commit -q -m "Record experiment 2 multi-app PR"
 - Consumes: 세 contract의 `QuoteResponse(contractId, monthlyPremium, quotedPremium)`
 - Produces: `QuoteResponse(..., rate: Double)`; 세 contract에 태그 `api-v1.1.0`, 이미지 `ghcr.io/khkim6040/demo-<x>-contract/api:1.1.0`; overlay는 revert되어 `0.1.0`
 
-- [ ] **Step 1: api 변경 (세 레포 동일)**
+- [x] **Step 1: api 변경 (세 레포 동일)**
 
 각 레포에서 `ContractController.kt`의 두 줄:
 
@@ -401,7 +401,7 @@ done
 ```
 Expected: 각 레포 `2 files`, `api test exit=1`(실패 없음), push 성공. (`perl` 치환 뒤 `git diff`로 두 파일이 바뀌었는지 눈으로 확인한다.)
 
-- [ ] **Step 2: 매니페스트 올리고 태그 (세 레포)**
+- [x] **Step 2: 매니페스트 올리고 태그 (세 레포)**
 
 ```bash
 for x in a b c; do
@@ -414,7 +414,7 @@ done
 ```
 Expected: 각 레포에서 `image:` 네 줄 중 api만 `:1.1.0`, 나머지 `:0.1.0`.
 
-- [ ] **Step 3: CI가 api만 빌드했는지 확인**
+- [x] **Step 3: CI가 api만 빌드했는지 확인**
 
 ```bash
 sleep 20
@@ -429,7 +429,7 @@ done
 ```
 Expected: 세 안 모두 `completed success`, bootJar는 `:apps:api:bootJar` 하나, `api:1.1.0 EXISTS`, `admin:1.1.0 absent`. B/C는 reusable 워크플로(`demo-b-platform@v1.0.0` / `demo-c-platform@v1.0.0`) 경로, A는 레포 내 워크플로 경로.
 
-- [ ] **Step 4: 롤백 (매니페스트 revert)**
+- [x] **Step 4: 롤백 (매니페스트 revert)**
 
 ```bash
 for x in a b c; do
@@ -449,7 +449,7 @@ done
 ```
 Expected: 각 레포 `Revert "Deploy api 1.1.0"`, `:0.1.0` 네 줄(`4`), CI 성공, release 실행 수는 그대로 `2`(revert는 이미지를 만들지 않음). 이미지 `api:1.1.0`과 태그는 남는다.
 
-- [ ] **Step 5: 기록**
+- [x] **Step 5: 기록**
 
 `experiments/03-independent-deploy.md`:
 
@@ -505,7 +505,7 @@ git commit -q -m "Record experiment 3 independent deploy"
 **Interfaces:**
 - Produces: 카탈로그 별칭 `libs.jackson.bom` = `tools.jackson:jackson-bom:3.1.8`; 플랫폼 태그 `v1.1.0`(A/B/C); B/C 아티팩트 `1.1.0`
 
-- [ ] **Step 1: 현재 버전 확인 (세 contract)**
+- [x] **Step 1: 현재 버전 확인 (세 contract)**
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home -v 25)
@@ -519,7 +519,7 @@ done
 ```
 Expected: api·admin `jackson-core:3.1.7 jackson-databind:3.1.7 jackson-module-kotlin:3.1.7`. consumer·batch는 Jackson이 없거나(빈 줄) 3.1.7. 이 결과를 기록의 "변경 전"으로 적는다.
 
-- [ ] **Step 2: A 플랫폼 PR**
+- [x] **Step 2: A 플랫폼 PR**
 
 `demo-a-platform/gradle/libs.versions.toml`에 추가:
 
@@ -559,7 +559,7 @@ git log --oneline -1
 ```
 Expected: 2파일 변경, 로컬에서 `3.1.7 -> 3.1.8` 세 줄, `BUILD SUCCESSFUL`, PR CI pass, 머지, 태그.
 
-- [ ] **Step 3: B·C 플랫폼 PR과 v1.1.0 퍼블리시**
+- [x] **Step 3: B·C 플랫폼 PR과 v1.1.0 퍼블리시**
 
 각 플랫폼의 `gradle/libs.versions.toml`에 A와 같은 두 줄, `platform-bom/build.gradle.kts`에:
 
@@ -600,7 +600,7 @@ for x in b c; do eval g=\$G_$x; curl -sL -o /dev/null -w "$x bom 1.1.0: %{http_c
 ```
 Expected: 각 2파일, `BUILD SUCCESSFUL`, 로컬 BOM pom에 `jackson-bom` 1회 이상, PR pass·머지·태그, publish `completed success` 둘, `200` 둘. (B·C 플랫폼 레포 `~/.m2`의 그룹 디렉터리는 B `platform`, C `cplatform`이므로 glob `*platform`으로 둘을 잡는다.)
 
-- [ ] **Step 4: A contract — upstream 머지 PR**
+- [x] **Step 4: A contract — upstream 머지 PR**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -621,7 +621,7 @@ git checkout -q main && git pull -q
 ```
 Expected: `main..upstream/main`에 커밋 2개(jackson 커밋 + 플랫폼 PR 머지 커밋), `conflicts=0`, 머지 커밋 `2 files changed`, `BUILD SUCCESSFUL`, PR pass·머지.
 
-- [ ] **Step 5: B·C contract — platformVersion PR**
+- [x] **Step 5: B·C contract — platformVersion PR**
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home -v 25)
@@ -642,7 +642,7 @@ done
 ```
 Expected: 각 1파일 1줄, `BUILD SUCCESSFUL`(새 패키지 1.1.0 다운로드), PR pass·머지.
 
-- [ ] **Step 6: 네 앱 버전 확인 (세 contract)**
+- [x] **Step 6: 네 앱 버전 확인 (세 contract)**
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home -v 25)
@@ -657,7 +657,7 @@ done
 ```
 Expected: 세 안 모두 api·admin에 `3.1.7 -> 3.1.8` 세 줄. consumer·batch는 Step 1과 같은 모양(없으면 없음, 있으면 `-> 3.1.8`). B/C는 `platformVersion=1.1.0`인데 `release.yml`은 `@v1.0.0`(의도된 어긋남, 관찰에 적는다).
 
-- [ ] **Step 7: 기록**
+- [x] **Step 7: 기록**
 
 `experiments/04-security-patch.md`:
 
@@ -707,7 +707,7 @@ git commit -q -m "Record experiment 4 security patch"
 
 ### Task 5: 마무리
 
-- [ ] **Step 1: 계획 체크박스 반영, push, 작업 트리 확인**
+- [x] **Step 1: 계획 체크박스 반영, push, 작업 트리 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
