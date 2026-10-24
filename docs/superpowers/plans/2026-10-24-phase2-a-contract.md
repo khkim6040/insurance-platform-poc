@@ -55,7 +55,7 @@
 **Interfaces:**
 - Produces: 로컬 레포 `demo-a-contract`. `git remote -v`에 `upstream`(demo-a-platform)과 `origin`(demo-a-contract). 브랜치 `main`이 `demo-a-platform`의 `95d383a`와 같은 이력을 가진다. 이후 Task는 모두 이 디렉터리에서 실행한다.
 
-- [ ] **Step 1: clone**
+- [x] **Step 1: clone**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc
@@ -65,7 +65,7 @@ git log --oneline -1
 ```
 Expected: `95d383a Add CI and tag-based release workflows`
 
-- [ ] **Step 2: 리모트 재구성**
+- [x] **Step 2: 리모트 재구성**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -82,7 +82,7 @@ upstream  https://github.com/khkim6040/demo-a-platform.git (fetch)
 upstream  https://github.com/khkim6040/demo-a-platform.git (push)
 ```
 
-- [ ] **Step 3: upstream 태그 정리**
+- [x] **Step 3: upstream 태그 정리**
 
 clone은 `api-v0.1.0` 태그를 함께 가져온다. 이 태그가 origin으로 push되면 contract 레포에서 플랫폼의 릴리스가 다시 돌아가므로 로컬에서 지운다. 이후 `git fetch upstream`은 태그를 가져오지 않도록 설정한다.
 
@@ -94,7 +94,7 @@ git tag
 ```
 Expected: 출력 없음(태그 0개)
 
-- [ ] **Step 4: 그대로 빌드되는지 확인 (변경 전 기준점)**
+- [x] **Step 4: 그대로 빌드되는지 확인 (변경 전 기준점)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -113,7 +113,7 @@ Expected: `BUILD SUCCESSFUL`. 커밋 없음(아직 변경이 없다).
 - Consumes: Task 1의 clone.
 - Produces: 모든 앱·도메인 코드가 `io.github.khkim6040.contract.{domain,api,admin,consumer,batch}` 패키지에 있다. `platform/**`은 `io.github.khkim6040.platform.*` 그대로. 빌드 산출물 `app.jar`의 `Start-Class`가 `io.github.khkim6040.contract.<app>.<App>ApplicationKt`.
 
-- [ ] **Step 1: 치환 대상 확인 (실패 조건 정의)**
+- [x] **Step 1: 치환 대상 확인 (실패 조건 정의)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -123,7 +123,7 @@ grep -rl 'io.github.khkim6040.sample' platform build-logic deploy .github Docker
 ```
 Expected: 디렉터리 10개(api·admin·consumer·batch·domain 각 main·test), `.kt` 파일 23개, 마지막 줄 `0`(upstream 소유 파일에는 `sample` 참조가 없어서 소유권 규약 안에서 치환이 끝난다).
 
-- [ ] **Step 2: 디렉터리 이동**
+- [x] **Step 2: 디렉터리 이동**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -134,7 +134,7 @@ find apps libs -type d -path '*/io/github/khkim6040/*' -not -path '*/build/*' | 
 ```
 Expected: 경로 10개가 모두 `.../io/github/khkim6040/contract`로 끝난다.
 
-- [ ] **Step 3: 패키지·import 문자열 치환**
+- [x] **Step 3: 패키지·import 문자열 치환**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -151,7 +151,7 @@ io.github.khkim6040.contract.consumer
 io.github.khkim6040.contract.domain
 ```
 
-- [ ] **Step 4: 빌드와 테스트로 검증**
+- [x] **Step 4: 빌드와 테스트로 검증**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -162,7 +162,7 @@ for app in api admin consumer batch; do unzip -p apps/$app/build/libs/app.jar ME
 ```
 Expected: `BUILD SUCCESSFUL`, 테스트 합계 `25`, `Start-Class: io.github.khkim6040.contract.<app>.<App>ApplicationKt` 네 줄.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -183,7 +183,7 @@ Expected: `R`(rename) 23개. git이 이동+치환을 rename으로 인식해야 �
 - Consumes: `deploy/base/**`의 이미지 이름 `ghcr.io/khkim6040/demo-a-platform/<app>` (upstream 소유, 그대로 둔다).
 - Produces: `kubectl kustomize deploy/overlays/dev`가 네 워크로드의 이미지를 `ghcr.io/khkim6040/demo-a-contract/<app>:0.1.0`으로, 네임스페이스를 `contract-dev`로 렌더링한다. 실험 3은 이 파일의 `newTag`만 바꾼다.
 
-- [ ] **Step 1: overlay 수정**
+- [x] **Step 1: overlay 수정**
 
 `deploy/overlays/dev/kustomization.yaml` 전체를 다음으로 교체:
 ```yaml
@@ -210,7 +210,7 @@ images:
     newTag: 0.1.0
 ```
 
-- [ ] **Step 2: 렌더링 확인**
+- [x] **Step 2: 렌더링 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -218,7 +218,7 @@ kubectl kustomize deploy/overlays/dev | grep -E 'image:|namespace:' | sort -u
 ```
 Expected: `namespace: contract-dev` 한 줄과 `image: ghcr.io/khkim6040/demo-a-contract/{admin,api,batch,consumer}:0.1.0` 네 줄. `demo-a-platform` 문자열이 없다.
 
-- [ ] **Step 3: README 교체**
+- [x] **Step 3: README 교체**
 
 `README.md` 전체를 다음으로 교체:
 ```markdown
@@ -241,7 +241,7 @@ Insurance platform PoC, A안(clone + upstream merge)의 비즈니스 프로젝�
 `apps/*/src/**`, `libs/**`, `deploy/overlays/**`, 이 README.
 ```
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -260,7 +260,7 @@ Expected: 마지막 줄 `25 files changed`(kt 23 + overlay 1 + README 1).
 - Consumes: Task 2의 `app.jar` 네 개, `insurance-platform-poc/tools/stub-server.py`.
 - Produces: 실험 1 성공 기준 "네 앱 기동"의 증거 로그.
 
-- [ ] **Step 1: jar 최신화**
+- [x] **Step 1: jar 최신화**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -270,7 +270,7 @@ ls apps/*/build/libs/app.jar
 ```
 Expected: 네 경로
 
-- [ ] **Step 2: api + 스텁**
+- [x] **Step 2: api + 스텁**
 
 ```bash
 S=/private/tmp/claude-501/-Users-gwanhokim-personal-projects/4cd73c96-55d2-443e-ad6b-891bfc33231f/scratchpad
@@ -288,7 +288,7 @@ grep -c 'Tomcat started on port 8080' $S/contract-api.log
 ```
 Expected: `HTTP/1.1 200`, `X-Correlation-Id`, `"quotedPremium":12000`, 마지막 줄 `1`. 패키지는 Task 2 Step 4의 `Start-Class`로 이미 확인했다.
 
-- [ ] **Step 3: admin**
+- [x] **Step 3: admin**
 
 ```bash
 S=/private/tmp/claude-501/-Users-gwanhokim-personal-projects/4cd73c96-55d2-443e-ad6b-891bfc33231f/scratchpad
@@ -303,7 +303,7 @@ kill $ADMIN
 ```
 Expected: `"id":"C-1001","id":"C-1002"`, `200`, `409`
 
-- [ ] **Step 4: consumer와 batch**
+- [x] **Step 4: consumer와 batch**
 
 ```bash
 S=/private/tmp/claude-501/-Users-gwanhokim-personal-projects/4cd73c96-55d2-443e-ad6b-891bfc33231f/scratchpad
@@ -325,7 +325,7 @@ Expected: `0`(Tomcat 없음), `event evt-1 -> PROCESSED` 등 3줄, `batch exit=0
 **Interfaces:**
 - Produces: `khkim6040/demo-a-contract` main에 커밋 13개(플랫폼 11 + Task 2·3). `ci` 성공. `ghcr.io/khkim6040/demo-a-contract/api:0.1.0` 존재(실험 3의 롤백 대상 기준 이미지). `git merge upstream/main`이 "Already up to date".
 
-- [ ] **Step 1: push와 CI**
+- [x] **Step 1: push와 CI**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -337,7 +337,7 @@ gh run view "$RUN" --json status,conclusion,url --jq '"\(.status) \(.conclusion)
 ```
 Expected: `completed success https://github.com/khkim6040/demo-a-contract/actions/runs/<id>`. 실패하면 로그를 읽고 고친다. 이 레포의 워크플로는 upstream과 동일하므로 실패 원인은 Task 2·3의 변경에 있어야 한다.
 
-- [ ] **Step 2: 태그 릴리스**
+- [x] **Step 2: 태그 릴리스**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -351,7 +351,7 @@ docker manifest inspect ghcr.io/khkim6040/demo-a-contract/api:0.1.0 | grep -m1 '
 ```
 Expected: `completed success …`, 다이제스트 한 줄. (gh 토큰에 `read:packages`가 없어 패키지 API 대신 `docker manifest inspect`로 확인한다.)
 
-- [ ] **Step 3: upstream 머지 경로 확인**
+- [x] **Step 3: upstream 머지 경로 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-a-contract
@@ -371,7 +371,7 @@ Expected: `Already up to date.`, 태그 `0`(--no-tags 설정이 동작), 로컬 
 - Consumes: Task 1~5의 결과(커밋 SHA, CI·release 실행 URL, 변경 파일 수).
 - Produces: 실험 1 기록의 A 열. Phase 3·4가 B·C 열을 같은 파일에 채운다.
 
-- [ ] **Step 1: 기록 작성**
+- [x] **Step 1: 기록 작성**
 
 `experiments/01-create.md` (꺾쇠 안을 Task 5의 실제 값으로 채운다):
 ```markdown
@@ -405,7 +405,7 @@ Expected: `Already up to date.`, 태그 `0`(--no-tags 설정이 동작), 로컬 
 - A: 패키지 치환이 git rename으로 인식되는지(`git status`의 `R`) 확인해야 한다. 디렉터리 이동과 내용 치환을 한 커밋에 넣으면 유사도가 높아 rename으로 잡히고, 이후 upstream이 `apps/*/src/**`를 바꾸지 않는 한 머지에 영향이 없다.
 ```
 
-- [ ] **Step 2: 커밋과 push**
+- [x] **Step 2: 커밋과 push**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
