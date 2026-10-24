@@ -86,7 +86,7 @@
 **Interfaces:**
 - Produces: `gh auth token`이 `read:packages`, `delete_repo` 스코프를 가진다. `~/.gradle/gradle.properties`에 `gpr.user=khkim6040`, `gpr.key=<token>`. 이후 모든 Gradle 빌드가 GitHub Packages를 읽을 수 있다.
 
-- [ ] **Step 1: 스코프 추가 (사용자가 직접 실행, 브라우저 인증)**
+- [x] **Step 1: 스코프 추가 (사용자가 직접 실행, 브라우저 인증)**
 
 이 단계는 대화형이라 에이전트가 실행할 수 없다. 사용자가 프롬프트에 다음을 입력한다.
 ```bash
@@ -94,14 +94,14 @@
 ```
 Expected: 브라우저 인증 후 `✓ Authentication complete.`
 
-- [ ] **Step 2: 스코프 확인**
+- [x] **Step 2: 스코프 확인**
 
 ```bash
 gh auth status 2>&1 | grep -E 'Token scopes'
 ```
 Expected: `read:packages`와 `delete_repo`가 목록에 있다.
 
-- [ ] **Step 3: Gradle 자격 증명 파일**
+- [x] **Step 3: Gradle 자격 증명 파일**
 
 ```bash
 mkdir -p ~/.gradle
@@ -122,7 +122,7 @@ Expected: `2`. 토큰 값은 출력하지 않는다. 커밋 없음.
 **Interfaces:**
 - Produces: 루트 프로젝트 `demo-b-platform`, 서브프로젝트 `platform-bom`·`platform-catalog`·`platform-http-starter`(디렉터리만). 모든 서브프로젝트의 `group = io.github.khkim6040.platform`, `version = -PplatformVersion` 또는 `0.0.0-LOCAL`, `maven-publish`가 적용된 모듈에 `GitHubPackages` 저장소. 플러그인 id `platform.kotlin-library`, `platform.spring-boot-app`, 카탈로그 별칭 `libs.spring.boot.bom`.
 
-- [ ] **Step 1: 레포 초기화와 복사**
+- [x] **Step 1: 레포 초기화와 복사**
 
 ```bash
 A=/Users/gwanhokim/personal-projects/insurance-poc/demo-a-platform
@@ -139,7 +139,7 @@ ls -a; ls build-logic build-logic/src/main/kotlin
 ```
 Expected: `build-logic/src/main/kotlin`에 `platform.kotlin-library.gradle.kts`, `platform.spring-boot-app.gradle.kts`.
 
-- [ ] **Step 2: 루트 설정**
+- [x] **Step 2: 루트 설정**
 
 `settings.gradle.kts`:
 ```kotlin
@@ -187,7 +187,7 @@ subprojects {
 }
 ```
 
-- [ ] **Step 3: 설정 로드 확인**
+- [x] **Step 3: 설정 로드 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-platform
@@ -196,7 +196,7 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 25)
 ```
 Expected: `platform-bom`, `platform-catalog`, `platform-http-starter` 세 줄과 `BUILD SUCCESSFUL`.
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-platform
@@ -215,7 +215,7 @@ git log --oneline -1
 - Consumes: Task 2의 플러그인과 퍼블리시 저장소.
 - Produces: 아티팩트 `io.github.khkim6040.platform:platform-http-starter:<version>`. POM의 compile 의존성에 `spring-boot-starter-webmvc`, `spring-boot-starter-restclient`, `jackson-module-kotlin`, `kotlin-reflect`; `dependencyManagement`에 `spring-boot-dependencies` import. 동작은 Phase 1과 같다(Correlation ID, ProblemDetail, `platform-defaults.yml`).
 
-- [ ] **Step 1: 소스 복사**
+- [x] **Step 1: 소스 복사**
 
 ```bash
 A=/Users/gwanhokim/personal-projects/insurance-poc/demo-a-platform
@@ -225,7 +225,7 @@ find platform-http-starter -type f | sort
 ```
 Expected: main 5 Kotlin + 3 리소스, test 2 Kotlin = 파일 10개.
 
-- [ ] **Step 2: 빌드 파일**
+- [x] **Step 2: 빌드 파일**
 
 `platform-http-starter/build.gradle.kts`:
 ```kotlin
@@ -253,7 +253,7 @@ publishing {
 }
 ```
 
-- [ ] **Step 3: 테스트와 로컬 퍼블리시로 검증**
+- [x] **Step 3: 테스트와 로컬 퍼블리시로 검증**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-platform
@@ -266,7 +266,7 @@ grep -A3 '<dependencyManagement>' $POM | grep -c 'spring-boot-dependencies'
 ```
 Expected: `BUILD SUCCESSFUL`, `tests="5"`, `failures="0"`, `1`, `1`.
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-platform
@@ -287,7 +287,7 @@ git log --oneline -1
   - `io.github.khkim6040.platform:platform-bom:<version>`: `spring-boot-dependencies:4.1.2` import + `platform-http-starter:<version>` 제약.
   - `io.github.khkim6040.platform:platform-catalog:<version>`(toml): `libs.versions.toml`의 모든 항목 + `[versions] platform = "<version>"` + `[libraries] platform-bom`, `platform-http-starter`(`version.ref = "platform"`). 소비 측 접근자: `libs.platform.bom`, `libs.platform.http.starter`, `libs.versions.platform`.
 
-- [ ] **Step 1: BOM**
+- [x] **Step 1: BOM**
 
 `platform-bom/build.gradle.kts`:
 ```kotlin
@@ -316,7 +316,7 @@ publishing {
 }
 ```
 
-- [ ] **Step 2: 카탈로그**
+- [x] **Step 2: 카탈로그**
 
 `platform-catalog/build.gradle.kts`:
 ```kotlin
@@ -343,7 +343,7 @@ publishing {
 }
 ```
 
-- [ ] **Step 3: 로컬 퍼블리시로 내용 검증**
+- [x] **Step 3: 로컬 퍼블리시로 내용 검증**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-platform
@@ -357,7 +357,7 @@ grep -E '^platform|^kotlin|^spring-boot ' $T
 ```
 Expected: 디렉터리 3개. BOM pom에 `spring-boot-dependencies`, `<version>4.1.2</version>`, `platform-http-starter`, `<version>0.0.1-LOCAL</version>`. toml에 `platform = "0.0.1-LOCAL"`, `kotlin = "2.4.21"`, `spring-boot = "4.1.2"`, `platform-bom = {…}`, `platform-http-starter = {…}`.
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-platform
@@ -381,7 +381,7 @@ git log --oneline -1
   - `publish`: `v*` 태그 push → 세 아티팩트를 GitHub Packages에 `<태그에서 v 제거>` 버전으로 퍼블리시.
   - `release-app`(`workflow_call`, 입력 없음): 호출 레포의 `<app>-v<semver>` 태그를 파싱 → 호출 레포 checkout → 플랫폼 레포를 `github.job_workflow_sha`(호출 측 `@v1.0.0`이 가리키는 커밋)로 `platform/`에 checkout → `./gradlew :apps:<app>:bootJar`(GitHub Packages 읽기용 `GITHUB_TOKEN`) → `platform/.dockerignore`를 루트로 복사 → `platform/Dockerfile`로 빌드 → `ghcr.io/<호출 레포>/<app>:<semver>` 푸시, 라벨 `org.opencontainers.image.revision=<호출 레포 sha>`.
 
-- [ ] **Step 1: Dockerfile 복사**
+- [x] **Step 1: Dockerfile 복사**
 
 ```bash
 A=/Users/gwanhokim/personal-projects/insurance-poc/demo-a-platform
@@ -391,7 +391,7 @@ cat Dockerfile .dockerignore
 ```
 Expected: Phase 1과 동일한 4줄 + 2줄.
 
-- [ ] **Step 2: ci.yml**
+- [x] **Step 2: ci.yml**
 
 `.github/workflows/ci.yml`:
 ```yaml
@@ -414,7 +414,7 @@ jobs:
       - run: ./gradlew build publishToMavenLocal -PplatformVersion=0.0.0-CI --console=plain
 ```
 
-- [ ] **Step 3: publish.yml**
+- [x] **Step 3: publish.yml**
 
 `.github/workflows/publish.yml`:
 ```yaml
@@ -443,7 +443,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-- [ ] **Step 4: release-app.yml**
+- [x] **Step 4: release-app.yml**
 
 `.github/workflows/release-app.yml`:
 ```yaml
@@ -496,7 +496,7 @@ jobs:
           labels: org.opencontainers.image.revision=${{ github.sha }}
 ```
 
-- [ ] **Step 5: README**
+- [x] **Step 5: README**
 
 `README.md`:
 ```markdown
@@ -527,7 +527,7 @@ Insurance platform PoC, B안(퍼블리시 + 템플릿)의 플랫폼 레포.
 로컬 자격 증명: `~/.gradle/gradle.properties`에 `gpr.user`, `gpr.key`(`read:packages` 토큰).
 ```
 
-- [ ] **Step 6: 커밋, push, CI, 태그 퍼블리시**
+- [x] **Step 6: 커밋, push, CI, 태그 퍼블리시**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-platform
@@ -548,7 +548,7 @@ gh run view -R $R "$RUN" --json status,conclusion,url --jq '"publish: \(.status)
 ```
 Expected: 둘 다 `completed success`.
 
-- [ ] **Step 7: 패키지 존재 확인**
+- [x] **Step 7: 패키지 존재 확인**
 
 ```bash
 BASE=https://maven.pkg.github.com/khkim6040/demo-b-platform/io/github/khkim6040/platform
@@ -575,7 +575,7 @@ Expected: `200` 세 줄. (401/404면 publish 로그를 본다. 토큰에 `read:p
 - Consumes: GitHub Packages의 `1.0.0` 아티팩트 세 개(Task 5), `release-app.yml@v1.0.0`.
 - Produces: GitHub Template 레포 `khkim6040/demo-b-template`. `./gradlew build`가 플랫폼 모듈 없이 통과(테스트 20개). 생성 후 절차는 README에 있다.
 
-- [ ] **Step 1: 복사**
+- [x] **Step 1: 복사**
 
 ```bash
 A=/Users/gwanhokim/personal-projects/insurance-poc/demo-a-platform
@@ -596,7 +596,7 @@ ls; ls apps libs build-logic/src/main/kotlin
 ```
 Expected: `platform/` 없음. `apps`에 네 앱, `libs/domain`, `build-logic/src/main/kotlin`에 `platform.spring-boot-app.gradle.kts`만.
 
-- [ ] **Step 2: 루트 설정**
+- [x] **Step 2: 루트 설정**
 
 `gradle.properties`:
 ```properties
@@ -647,7 +647,7 @@ include(
 )
 ```
 
-- [ ] **Step 3: build-logic**
+- [x] **Step 3: build-logic**
 
 `build-logic/settings.gradle.kts`:
 ```kotlin
@@ -709,7 +709,7 @@ tasks.withType<Test>().configureEach {
 }
 ```
 
-- [ ] **Step 4: api·admin 빌드 파일과 deploy 이름**
+- [x] **Step 4: api·admin 빌드 파일과 deploy 이름**
 
 `apps/api/build.gradle.kts`와 `apps/admin/build.gradle.kts` 둘 다 다음 내용으로 교체:
 ```kotlin
@@ -735,7 +735,7 @@ kubectl kustomize deploy/overlays/dev | grep -E 'image:|namespace:' | sed 's/^ *
 ```
 Expected: `demo-a` 없음. 이미지 네 개 `ghcr.io/khkim6040/demo-b-template/<app>:0.1.0`, `namespace: demo-b-template-dev`.
 
-- [ ] **Step 5: 빌드 검증 (GitHub Packages 아티팩트 사용)**
+- [x] **Step 5: 빌드 검증 (GitHub Packages 아티팩트 사용)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-template
@@ -750,7 +750,7 @@ Expected: `BUILD SUCCESSFUL`, 테스트 `20`, 의존성 트리에 `io.github.khk
 - `401`/`Could not resolve io.github.khkim6040.platform:platform-catalog` → `~/.gradle/gradle.properties`의 `gpr.*` 확인(Task 1).
 - `Unresolved reference: platform` in `platform.kotlin-library.gradle.kts` → `build-logic/settings.gradle.kts`가 카탈로그를 못 읽은 것. `settingsDir.resolve("../gradle.properties")` 경로 확인.
 
-- [ ] **Step 6: 워크플로**
+- [x] **Step 6: 워크플로**
 
 `.github/workflows/ci.yml`:
 ```yaml
@@ -799,7 +799,7 @@ jobs:
     secrets: inherit
 ```
 
-- [ ] **Step 7: README**
+- [x] **Step 7: README**
 
 `README.md`:
 ```markdown
@@ -827,7 +827,7 @@ Insurance platform PoC, B안의 비즈니스 모노레포 템플릿. 플랫폼 �
 - `Dockerfile`은 없다. 릴리스 워크플로가 플랫폼 레포에서 가져온다
 ```
 
-- [ ] **Step 8: 커밋, push, CI, 템플릿 지정**
+- [x] **Step 8: 커밋, push, CI, 템플릿 지정**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-template
@@ -859,7 +859,7 @@ gh secret set GPR_TOKEN -R khkim6040/demo-b-template --body "$(gh auth token)"
 - Consumes: 템플릿(Task 6), 아티팩트 `1.0.0`(Task 5).
 - Produces: `khkim6040/demo-b-contract` main에 커밋 3개(템플릿 초기 커밋 + 치환 2개). CI 성공. `ghcr.io/khkim6040/demo-b-contract/api:0.1.0`. 여기서 센 단계·파일 수가 Task 8의 B 열이다.
 
-- [ ] **Step 1: 빈 레포 삭제 후 템플릿으로 생성 (단계 ①)**
+- [x] **Step 1: 빈 레포 삭제 후 템플릿으로 생성 (단계 ①)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc
@@ -873,7 +873,7 @@ ls
 ```
 Expected: 첫 줄 `true`(빈 레포인지 확인한 뒤에만 삭제). 생성 후 커밋 1개(`Initial commit`), 템플릿 파일 전부.
 
-- [ ] **Step 2: 패키지 치환 (단계 ②)**
+- [x] **Step 2: 패키지 치환 (단계 ②)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-contract
@@ -888,7 +888,7 @@ git commit -q -m "Rename sample packages to contract"
 ```
 Expected: `0`, rename `23`.
 
-- [ ] **Step 3: 레포 이름 치환 (단계 ③)**
+- [x] **Step 3: 레포 이름 치환 (단계 ③)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-contract
@@ -902,7 +902,7 @@ git log --oneline | cat
 ```
 Expected: `0`. 이미지 네 개 `ghcr.io/khkim6040/demo-b-contract/<app>:0.1.0`, `namespace: demo-b-contract-dev`. 변경 파일: `settings.gradle.kts`, `deploy/base/*/deployment.yaml`×3, `deploy/base/batch/cronjob.yaml`, `deploy/overlays/dev/kustomization.yaml`, `README.md` = 7.
 
-- [ ] **Step 4: 빌드와 네 앱 기동**
+- [x] **Step 4: 빌드와 네 앱 기동**
 
 ```bash
 S=/private/tmp/claude-501/-Users-gwanhokim-personal-projects/4cd73c96-55d2-443e-ad6b-891bfc33231f/scratchpad
@@ -932,7 +932,7 @@ grep -o 'expired [0-9]* contract(s)' $S/b-batch.log
 ```
 Expected: `BUILD SUCCESSFUL`, 테스트 `20`, `Start-Class`가 `io.github.khkim6040.contract.<app>…` 네 줄, api `200` + `X-Correlation-Id` + `"quotedPremium":12000`, admin `200` 그리고 `409`, `tomcat_lines=0`, consumer 이벤트 3줄, `batch exit=0`, `expired 1 contract(s)`.
 
-- [ ] **Step 5: push, CI, 태그 릴리스 (단계 ④)**
+- [x] **Step 5: push, CI, 태그 릴리스 (단계 ④)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-b-contract
@@ -961,7 +961,7 @@ Expected: `ci: completed success`, `release: completed success`, 다이제스트
 - Consumes: Task 7의 단계·파일 수, 커밋 SHA, 실행 URL, 다이제스트.
 - Produces: B 열이 채워진 실험 1 기록. C 열은 Phase 4.
 
-- [ ] **Step 1: 기록 갱신**
+- [x] **Step 1: 기록 갱신**
 
 `experiments/01-create.md`의 `## 결과` 표를 다음으로 교체하고(A 열은 그대로), `## 근거`와 `## 관찰`에 B 항목을 추가한다. 꺾쇠는 Task 7의 실제 값으로 채운다.
 
@@ -991,7 +991,7 @@ Expected: `ci: completed success`, `release: completed success`, 다이제스트
 - B: 플랫폼 버전을 올릴 때 숫자 두 개(`gradle.properties`의 `platformVersion`, `release.yml`의 `@v`)를 맞춰야 한다. 스펙은 "하나"를 목표로 했지만 reusable workflow 참조는 Gradle 프로퍼티로 못 만든다. 실험 7·8에서 두 숫자가 어긋났을 때의 비용을 본다.
 ```
 
-- [ ] **Step 2: 커밋과 push**
+- [x] **Step 2: 커밋과 push**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
