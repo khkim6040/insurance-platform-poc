@@ -18,6 +18,7 @@ Spring Boot 4.1.2가 고정한 Jackson 3.1.7(`jackson-core`, `jackson-databind`,
 | 의미적 충돌 (빌드·테스트 실패, 동작 변화) | 없음. `build` 통과 | 없음. `build` 통과(1.1.0 패키지 다운로드) | 없음 |
 | 함께 끌려온 무관한 변경 수 | 0 (upstream 커밋 2개 = 이 패치 커밋 + PR 머지 커밋) | 0 (`1.1.0` = 이 패치만) | 0 |
 | 검증 방법과 결과 | 네 앱 `dependencies --configuration runtimeClasspath`: api·admin 세 모듈 `3.1.7 -> 3.1.8`, consumer·batch 없음(변경 전과 같음) | 같음. `platform-bom:1.1.0` pom에 `jackson-bom` import 1 | 같음 |
+| 에이전트 개입 (사람 결정·행동이 필요했던 지점) | 0 | 0 | 0 |
 
 ## 근거: 커밋 SHA, PR, CI 실행 링크
 

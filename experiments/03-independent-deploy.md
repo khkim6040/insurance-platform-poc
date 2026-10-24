@@ -14,6 +14,7 @@ api만 수정(`QuoteResponse.rate` 추가, 2파일), `deploy/overlays/dev`의 ap
 | 의미적 충돌 (빌드·테스트 실패, 동작 변화) | 없음 | 없음 | 없음 |
 | 함께 끌려온 무관한 변경 수 | 0 | 0 | 0 |
 | 검증 방법과 결과 | release 로그에 `Task :apps:api:bootJar`만, `api:1.1.0` 존재·`admin:1.1.0` 부재, revert 후 kustomize 렌더 네 이미지 전부 `0.1.0`, revert 후 release 실행 수 2로 불변(CI 녹색) | 같음 (reusable `demo-b-platform/release-app.yml@v1.0.0` 경로) | 같음 (`demo-c-platform/release-app.yml@v1.0.0` 경로) |
+| 에이전트 개입 (사람 결정·행동이 필요했던 지점) | 0 | 0 | 0 |
 
 ## 근거: 커밋 SHA, PR, CI 실행 링크
 

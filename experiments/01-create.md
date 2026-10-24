@@ -14,6 +14,7 @@
 | 의미적 충돌 (빌드·테스트 실패, 동작 변화) | 없음. 치환 직후 `clean build` 통과, 테스트 25개 | 없음. `clean build` 통과, 테스트 20개(스타터 테스트 5개는 플랫폼 레포에 있음) | 없음. `clean build` 통과, 테스트 20개 |
 | 함께 끌려온 무관한 변경 수 | 해당 없음. 단, clone은 플랫폼의 샘플 코드·`api-v0.1.0` 태그·커밋 이력 11개를 전부 가져온다 | 해당 없음. 템플릿 생성은 이력 없이 파일만 복사(커밋 1개), 태그 없음 | 해당 없음. 커밋 1개(57파일), 태그 없음. 커밋 메시지에 원본 플랫폼 커밋(`templates/multi-service@4d80703`)이 남는다 |
 | 검증 방법과 결과 | `clean build` 통과, 네 jar의 `Start-Class`가 `contract` 패키지, 네 앱 기동(api quote 12000 + `X-Correlation-Id`, admin 목록 2건·suspend 200→409, consumer Tomcat 없음·PROCESSED/DUPLICATE/DEAD_LETTERED, batch `expired 1` exit 0), CI 성공, `api:0.1.0` 매니페스트 확인, `merge upstream/main` = Already up to date | A와 같은 기동 검증 통과, `runtimeClasspath`에 `platform-http-starter:1.0.0`·`platform-bom:1.0.0`, CI 성공(다른 레포의 `GITHUB_TOKEN`으로 GitHub Packages 읽기 성공, 추가 시크릿 없음), reusable `release-app.yml@v1.0.0`로 `api:0.1.0` 푸시(플랫폼 checkout `github.job_workflow_sha` = `v1.0.0` 커밋 `61f42812`) | B와 같은 기동 검증 통과, `runtimeClasspath`에 `cplatform:platform-http-starter:1.0.0`·`cplatform:platform-bom:1.0.0`(`demo-c-platform` 패키지), CI 성공, reusable `release-app.yml@v1.0.0`(demo-c-platform, checkout `4d80703`)로 `api:0.1.0` 푸시 |
+| 에이전트 개입 (사람 결정·행동이 필요했던 지점) | 0 | 2: ① gh 토큰에 `read:packages`·`delete_repo` 스코프 추가(브라우저 인증, 개발자당 1회) ② Phase 0이 미리 만든 빈 레포를 지우고 템플릿으로 재생성할지 결정(삭제 승인) | 0 (플랫폼 구축 중 개입 1은 baseline에 기록) |
 
 ## 근거: 커밋 SHA, PR, CI 실행 링크
 
