@@ -64,7 +64,7 @@
 **Interfaces:**
 - Produces: GitHub Packages 좌표 `io.github.khkim6040.platform:{platform-bom,platform-catalog,platform-http-starter}` @ `https://maven.pkg.github.com/khkim6040/demo-c-platform`; reusable 워크플로 `khkim6040/demo-c-platform/.github/workflows/release-app.yml`
 
-- [ ] **Step 1: 복사와 이름 치환**
+- [x] **Step 1: 복사와 이름 치환**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc
@@ -78,7 +78,7 @@ git remote add origin https://github.com/khkim6040/demo-c-platform.git
 ```
 Expected: `leftover=1`(`demo-b` 문자열 없음). 치환된 파일은 `settings.gradle.kts`, `build.gradle.kts`, `.github/workflows/release-app.yml`, `README.md` 네 개(`git status`로는 아직 안 보임, 새 레포).
 
-- [ ] **Step 2: 로컬 빌드·퍼블리시 검증**
+- [x] **Step 2: 로컬 빌드·퍼블리시 검증**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-platform
@@ -89,7 +89,7 @@ grep -o 'maven.pkg.github.com/khkim6040/[a-z-]*' build.gradle.kts
 ```
 Expected: `BUILD SUCCESSFUL`, 디렉터리 `platform-bom platform-catalog platform-http-starter`, URL이 `demo-c-platform`.
 
-- [ ] **Step 3: 커밋**
+- [x] **Step 3: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-platform
@@ -111,7 +111,7 @@ git log --oneline
 - Consumes: Task 1의 패키지 좌표와 reusable 워크플로 경로
 - Produces: 치환 대상 두 가지 — 문자열 `demo-c-template`, 패키지 `io.github.khkim6040.sample`(디렉터리 `*/io/github/khkim6040/sample`, 10개). Task 3의 스크립트가 이 둘을 바꾼다
 
-- [ ] **Step 1: 복사와 참조 치환**
+- [x] **Step 1: 복사와 참조 치환**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-platform
@@ -129,7 +129,7 @@ ls -la gradlew .github/workflows
 ```
 Expected: `leftover=1`; `demo-c-template` 참조는 settings 1 + README 3 + overlay 5 + base 4 = `13`줄; `demo-c-platform` 파일은 `./.github/workflows/release.yml`, `./build-logic/settings.gradle.kts`, `./settings.gradle.kts` 세 개; `sample` 디렉터리 `10`; `.kt` `23`; `gradlew`가 실행 가능(`-rwxr-xr-x`), 워크플로 `ci.yml`·`release.yml`.
 
-- [ ] **Step 2: 템플릿 README 교체**
+- [x] **Step 2: 템플릿 README 교체**
 
 `templates/multi-service/README.md` 전체 내용:
 
@@ -159,7 +159,7 @@ Insurance platform PoC, C안의 비즈니스 모노레포. `demo-c-platform`의 
 - `Dockerfile`은 없다. 릴리스 워크플로가 플랫폼 레포에서 가져온다
 ```
 
-- [ ] **Step 3: 플랫폼 루트 Gradle이 템플릿을 무시하는지 확인**
+- [x] **Step 3: 플랫폼 루트 Gradle이 템플릿을 무시하는지 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-platform
@@ -169,7 +169,7 @@ git status --short | grep -v '^?? templates/' ; echo "non-template changes=$?"
 ```
 Expected: 프로젝트 목록에 `platform-bom`, `platform-catalog`, `platform-http-starter`만 있고 `template` 줄 없음(루트 `settings.gradle.kts`가 include하지 않으므로). `non-template changes=1`(템플릿 외 변경 없음).
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-platform
@@ -189,7 +189,7 @@ git log --oneline | head -2
 - Consumes: Task 2의 치환 대상(`demo-c-template`, `io.github.khkim6040.sample`), 커밋된 `templates/multi-service`
 - Produces: `tools/create-project.sh <repo-name> <package-segment> [dest-dir]`. 성공 시 `dest-dir`(기본 `$PWD/<repo-name>`)에 `main` 브랜치 커밋 1개가 있는 git 레포. 종료 코드 0. 실패(인자 오류, 대상 존재, 치환 잔여) 시 1
 
-- [ ] **Step 1: 스크립트 작성**
+- [x] **Step 1: 스크립트 작성**
 
 `tools/create-project.sh` 전체 내용:
 
@@ -243,7 +243,7 @@ chmod +x tools/create-project.sh
 bash -n tools/create-project.sh && echo syntax-ok
 ```
 
-- [ ] **Step 2: 스크래치에 생성해 구조 검증**
+- [x] **Step 2: 스크래치에 생성해 구조 검증**
 
 ```bash
 S=/private/tmp/claude-501/-Users-gwanhokim-personal-projects/4cd73c96-55d2-443e-ad6b-891bfc33231f/scratchpad
@@ -265,7 +265,7 @@ grep -n 'demo-c-platform' .github/workflows/release.yml settings.gradle.kts buil
 ```
 Expected: `exit=0`; 커밋 1개 `Generate zz-probe from demo-c-platform templates/multi-service@<sha>`; 미커밋 변경 `0`; `rootProject.name = "zz-probe"`; overlay `4`; README 첫 줄 `# zz-probe`; `.kt` `23`, 전부 `probe` 경로(`23`), `sample` 디렉터리 `0`; 패키지 목록이 `io.github.khkim6040.probe.{admin,api,batch,consumer,domain}` 5줄; `leftover=1`; `demo-c-platform` 참조 `3`(플랫폼 참조는 그대로 남아야 함).
 
-- [ ] **Step 3: 실패 경로 검증**
+- [x] **Step 3: 실패 경로 검증**
 
 ```bash
 S=/private/tmp/claude-501/-Users-gwanhokim-personal-projects/4cd73c96-55d2-443e-ad6b-891bfc33231f/scratchpad
@@ -279,7 +279,7 @@ rm -rf $S/zz-probe
 ```
 Expected: 네 줄 모두 `exit=1`, `zz-bad` 디렉터리 없음(`No such file`).
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-platform
@@ -298,7 +298,7 @@ git log --oneline | head -3
 **Interfaces:**
 - Produces: GitHub Packages에 `1.0.0` 세 아티팩트, 태그 `v1.0.0`(템플릿·스크립트 포함). Task 5의 `platformVersion=1.0.0`과 `release.yml@v1.0.0`이 이것을 가리킨다
 
-- [ ] **Step 1: README 교체**
+- [x] **Step 1: README 교체**
 
 `README.md` 전체 내용:
 
@@ -350,7 +350,7 @@ git log --oneline
 ```
 Expected: 커밋 4개.
 
-- [ ] **Step 2: push, CI, 태그, publish**
+- [x] **Step 2: push, CI, 태그, publish**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-platform
@@ -370,7 +370,7 @@ git rev-parse --short v1.0.0
 ```
 Expected: 둘 다 `completed success`. `v1.0.0` SHA를 Task 6에 적는다.
 
-- [ ] **Step 3: 패키지 존재 확인**
+- [x] **Step 3: 패키지 존재 확인**
 
 ```bash
 BASE=https://maven.pkg.github.com/khkim6040/demo-c-platform/io/github/khkim6040/platform
@@ -391,7 +391,7 @@ Expected: `200` 세 줄(302를 따라간 뒤).
 - Consumes: Task 3의 스크립트, Task 4의 `1.0.0` 패키지와 `v1.0.0` 태그
 - Produces: 실험 1 C 열의 수동 단계 목록. 이 Task에서 사람이 직접 친 명령만 센다
 
-- [ ] **Step 1: 생성 (단계 ①)**
+- [x] **Step 1: 생성 (단계 ①)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-platform
@@ -406,7 +406,7 @@ grep -n 'uses:' .github/workflows/release.yml
 ```
 Expected: 플랫폼 작업 트리 깨끗(`0`), `Generate demo-c-contract from demo-c-platform templates/multi-service@<v1.0.0 SHA>`, 파일 수 한 줄(기록용), `leftover=1`, `platformVersion=1.0.0`, `@v1.0.0`.
 
-- [ ] **Step 2: 빌드와 네 앱 기동**
+- [x] **Step 2: 빌드와 네 앱 기동**
 
 ```bash
 S=/private/tmp/claude-501/-Users-gwanhokim-personal-projects/4cd73c96-55d2-443e-ad6b-891bfc33231f/scratchpad
@@ -439,7 +439,7 @@ Expected: `BUILD SUCCESSFUL`, 테스트 `20`, `platform-http-starter:1.0.0`·`pl
 
 빌드가 실패하면: 원인이 템플릿이면 `demo-c-platform/templates/multi-service`를 고쳐 커밋하고 `v1.0.1`로 다시 퍼블리시한 뒤 `demo-c-contract`를 지우고 Step 1부터 다시 한다. 이 경우 관찰에 "템플릿 검증 공백이 실제로 비용을 냈다"고 적는다.
 
-- [ ] **Step 3: push, CI, 태그 릴리스 (단계 ②)**
+- [x] **Step 3: push, CI, 태그 릴리스 (단계 ②)**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/demo-c-contract
@@ -463,7 +463,7 @@ git status --short | wc -l
 ```
 Expected: `ci: completed success`, `newTag: "0.1.0"`(템플릿 그대로라 수정 불필요), `release: completed success`, 다이제스트 한 줄, 작업 트리 깨끗(`0`). release가 실패하면 `gh run view -R $R <id> --log | grep -iE 'error|denied|401' | head`로 원인을 본다.
 
-- [ ] **Step 4: 수동 단계 집계**
+- [x] **Step 4: 수동 단계 집계**
 
 이 Task에서 사람이 친 명령은 두 묶음이다. 집계값을 Task 6에 옮긴다.
 
@@ -479,7 +479,7 @@ Expected: `ci: completed success`, `newTag: "0.1.0"`(템플릿 그대로라 수�
 - Modify: `insurance-platform-poc/experiments/01-create.md` (C 열 세 번째 칸들, 근거에 C 항목, 관찰에 C 항목)
 - Modify: `insurance-platform-poc/docs/superpowers/plans/2026-10-24-phase4-c-platform-generator-contract.md` (체크박스)
 
-- [ ] **Step 1: 결과 표 C 열 채우기**
+- [x] **Step 1: 결과 표 C 열 채우기**
 
 `experiments/01-create.md` 결과 표의 각 행에서 마지막(C) 칸을 아래로 채운다. `<...>`는 Task 4·5의 실제 값으로 바꾼다.
 
@@ -492,7 +492,7 @@ Expected: `ci: completed success`, `newTag: "0.1.0"`(템플릿 그대로라 수�
 | 함께 끌려온 무관한 변경 수 | 해당 없음. 커밋 1개, 태그 없음. 커밋 메시지에 원본 플랫폼 커밋(`templates/multi-service@<v1.0.0 SHA>`)이 남는다 |
 | 검증 방법과 결과 | B와 같은 기동 검증 통과, `runtimeClasspath`에 `platform-http-starter:1.0.0`·`platform-bom:1.0.0`(`demo-c-platform` 패키지), CI 성공, reusable `release-app.yml@v1.0.0`(demo-c-platform)로 `api:0.1.0` 푸시 |
 
-- [ ] **Step 2: 근거와 관찰 추가**
+- [x] **Step 2: 근거와 관찰 추가**
 
 근거 절에 추가:
 
@@ -511,7 +511,7 @@ Expected: `ci: completed success`, `newTag: "0.1.0"`(템플릿 그대로라 수�
 - C: 플랫폼 버전 숫자 두 개(`platformVersion`, `@v`) 문제는 B와 동일하다. 템플릿이 `v1.0.0` 태그에서 나오므로 생성 시점에는 두 숫자가 자동으로 일치하지만, 이후 올릴 때는 B와 같은 두 곳 수정이다.
 ```
 
-- [ ] **Step 3: 계획 체크박스 반영 후 커밋**
+- [x] **Step 3: 계획 체크박스 반영 후 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
