@@ -16,12 +16,12 @@
 | 항목 | 청사진 | 결정 | 이유 |
 |---|---|---|---|
 | HTTP 프레임워크 | MVC/WebFlux 선택 가능, 비교 실험 | **Spring MVC 고정**. WebFlux 비교(5장, Phase 2·7, 실험 9) 삭제 | 리더 결정. WebFlux가 나중에 필요해지면 고칠 범위만 줄이는 방향으로 설계 |
-| 버전 기준선 | 미정 | **Spring Boot 4.1.2, JDK 25, Kotlin, Gradle** | 신규 플랫폼의 레퍼런스 역할. 4.1은 2026-06 GA, OSS 지원 2027-06까지 |
+| 버전 기준선 | 미정 | **Spring Boot 4.1.2, JDK 25, Kotlin 2.4.21, Gradle 9.7.0** | 신규 플랫폼의 레퍼런스 역할. 4.1은 2026-06 GA, OSS 지원 2027-06까지. Kotlin 2.4.21이 완전 지원하는 최대 Gradle이 9.7.0 |
 | HTTP Client | RestClient/WebClient | **RestClient만** | MVC 고정에 따름 |
 | Virtual Threads | 별도 비교 실험 | **플랫폼 기본값으로 활성화**, 비교 없음 | JDK 25에서는 pinning 문제가 없음 |
 | 플랫폼 HTTP 모듈 | http-core / http-mvc / http-webflux | **`platform-http-starter` 하나**, 패키지로 중립/Servlet 분리 | 모듈 분리는 WebFlux가 생길 때 패키지를 승격하면 충분 |
 | 관측성·복원력 스타터 | 구조도에만 존재 | **Phase 6(심화)에서 추가**, 실험 10의 전파 대상 | 처음부터 있으면 전파 비용을 측정할 수 없음 |
-| Kafka·MongoDB | 초기 PoC 제외 가능 | **PoC 범위 밖**. Consumer는 인메모리 소스, Batch는 H2 | 구조 선택이 끝난 뒤 채택된 안에서 한 번만 만들면 됨 |
+| Kafka·MongoDB | 초기 PoC 제외 가능 | **PoC 범위 밖**. Consumer는 인메모리 소스, Batch는 Spring Batch 6 기본 인메모리 JobRepository | 구조 선택이 끝난 뒤 채택된 안에서 한 번만 만들면 됨 |
 | 배포 | Docker/K8s | **이미지 빌드 + Kustomize 매니페스트 렌더링 검증까지**. 클러스터 적용 없음 | 롤백은 Kubernetes 기본 동작이라 PoC로 증명할 가치가 낮음 |
 | 이미지 빌드 | 미정 | **Dockerfile** (Jib·Buildpacks 미사용) | 팀 컨벤션. CI 실행 횟수가 적어 속도 이득이 무의미 |
 | 이미지 태그 | 미정 | **앱별 시맨틱 버전 git 태그 `<app>-v<semver>`** | 팀의 내부 배포 플랫폼이 커밋에 이미지 태그를 지정하는 방식 |
@@ -89,16 +89,14 @@ demo-a-platform/
 
 - `io.github.khkim6040.platform.http` (프레임워크 중립)
   - Correlation ID 헤더 이름 상수 (`X-Correlation-Id`)
-  - HTTP 클라이언트 타임아웃 프로퍼티 `platform.http.client.connect-timeout`(기본 2s), `read-timeout`(기본 5s)
   - 공통 에러 응답 규약: RFC 9457 ProblemDetail에 `correlationId` 필드 추가
 - `io.github.khkim6040.platform.http.servlet` (Servlet 전용)
   - Correlation ID를 요청 헤더에서 읽거나 생성해 MDC와 응답 헤더에 넣는 Filter
   - `@RestControllerAdvice` 예외 핸들러 (`IllegalArgumentException` → 400, 그 외 → 500)
-  - 타임아웃 프로퍼티를 적용하는 `RestClientCustomizer`
 - 등록: `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`. Servlet 설정 클래스에 `@ConditionalOnWebApplication(type = SERVLET)`.
-- 기본 프로퍼티: `EnvironmentPostProcessor`가 스타터 안의 `platform-defaults.yml`(`spring.threads.virtual.enabled=true`, ProblemDetail 활성화)을 **최저 우선순위**로 올린다. 앱의 `application.yml`이 항상 이긴다.
-- 스타터가 Boot의 MVC 스타터를 `api` 의존성으로 가져간다. 앱은 `platform-http-starter` 한 줄만 선언한다. Consumer와 Batch는 이 스타터에 의존하지 않는다.
-- 실험 대상 지정: 타임아웃 프로퍼티 기본값 클래스는 실험 6의 의도적 위반 대상, Correlation Filter는 실험 5의 변경 대상.
+- 기본 프로퍼티: `EnvironmentPostProcessor`가 스타터 안의 `platform-defaults.yml`을 **최저 우선순위**로 올린다. 내용은 `spring.threads.virtual.enabled=true`, `spring.mvc.problemdetails.enabled=true`, HTTP 클라이언트 타임아웃 `spring.http.clients.connect-timeout=2s`, `read-timeout=5s`(Boot 내장 프로퍼티라 별도 클래스 불필요). 앱의 `application.yml`이 항상 이긴다.
+- 스타터가 Boot의 `spring-boot-starter-webmvc`와 `spring-boot-starter-restclient`를 `api` 의존성으로 가져간다. 앱은 `platform-http-starter` 한 줄만 선언한다. Consumer와 Batch는 이 스타터에 의존하지 않는다.
+- 실험 대상 지정: `platform-defaults.yml`의 타임아웃 기본값은 실험 6의 의도적 위반 대상, Correlation Filter는 실험 5의 변경 대상.
 
 ### 4.4 B/C안 퍼블리시 아티팩트
 
@@ -131,7 +129,7 @@ A안은 플랫폼 레포 그대로, B/C안은 `platform/` 디렉터리가 빠지
 | `api` (8080) | `POST /contracts`(도메인 규칙 검증), `GET /contracts/{id}`, `GET /contracts/{id}/quote`(외부 스텁을 RestClient로 호출) | Servlet, Virtual Threads | `X-Correlation-Id` 응답 헤더, 에러 시 ProblemDetail, 타임아웃 적용 |
 | `admin` (8081) | `GET /admin/contracts`, `POST /admin/contracts/{id}/suspend` | Servlet | API와 독립 실행, 같은 도메인 참조 |
 | `consumer` | `ContractEvent` 처리. 처리한 ID를 기억해 중복 제거, 실패는 N회 재시도 후 로그로 격리 | `web-application-type=none`. `@Scheduled` 가짜 소스가 이벤트를 주기 생성해 프로세스 유지 | 웹 서버 없음. 핸들러 직접 호출 테스트 |
-| `batch` | `contract-expiry-job`: 계약 목록에 만기 규칙 적용, 상태 변경 기록 | Spring Batch, H2 인메모리 JobRepository, 완료 후 종료 | 종료 코드 0, `COMPLETED`, 웹 서버 없음 |
+| `batch` | `contractExpiryJob`: 계약 목록에 만기 규칙 적용, 상태 변경 기록 | Spring Batch 6, 기본 인메모리 JobRepository, 완료 후 종료 | 종료 코드 0, `COMPLETED`, 웹 서버 없음 |
 
 저장소는 전부 인메모리(`ConcurrentHashMap`)다.
 
@@ -139,7 +137,7 @@ A안은 플랫폼 레포 그대로, B/C안은 `platform/` 디렉터리가 빠지
 
 - 앱마다 `@SpringBootTest` 컨텍스트 테스트 하나: api·admin은 `WebApplicationType.SERVLET`, consumer·batch는 `NONE`을 단언한다.
 - 앱마다 동작 테스트 하나(api 헤더·에러 응답, consumer 중복·재시도, batch Job 결과).
-- 스타터: Filter, 예외 핸들러, RestClient 타임아웃 테스트.
+- 스타터: Filter, 예외 핸들러, 기본 프로퍼티 적용 테스트.
 - `./gradlew build` 전체 실행과 `./gradlew :apps:api:test` 앱 단위 실행이 모두 된다.
 
 ### 5.4 A안 파일 소유권 규약
