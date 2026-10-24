@@ -82,13 +82,13 @@
 **Interfaces:**
 - Produces: `/usr/libexec/java_home -v 25`가 JDK 25 경로를 반환한다. 이후 모든 Gradle 명령은 `JAVA_HOME`을 25로 두고 실행한다.
 
-- [ ] **Step 1: 설치**
+- [x] **Step 1: 설치**
 
 ```bash
 brew install --cask temurin@25
 ```
 
-- [ ] **Step 2: 확인**
+- [x] **Step 2: 확인**
 
 ```bash
 /usr/libexec/java_home -v 25
@@ -96,7 +96,7 @@ JAVA_HOME=$(/usr/libexec/java_home -v 25) java -version
 ```
 Expected: 경로 출력 후 `openjdk version "25...`
 
-- [ ] **Step 3: 이 세션과 이후 Bash 호출에 적용**
+- [x] **Step 3: 이 세션과 이후 Bash 호출에 적용**
 
 모든 Gradle 명령 앞에 `export JAVA_HOME=$(/usr/libexec/java_home -v 25)`를 붙인다. 커밋 없음.
 
@@ -108,7 +108,7 @@ Expected: 경로 출력 후 `openjdk version "25...`
 **Interfaces:**
 - Produces: `GET http://127.0.0.1:9090/rate[?delayMs=N]` → `200 {"rate": 1.2}`. 환경 변수 `STUB_DELAY_MS`로 기본 지연 설정. 그 외 경로 404. api 앱의 `QuoteClient`가 이 응답 스키마에 의존한다.
 
-- [ ] **Step 1: 스크립트 작성**
+- [x] **Step 1: 스크립트 작성**
 
 ```python
 #!/usr/bin/env python3
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
 ```
 
-- [ ] **Step 2: 동작 확인**
+- [x] **Step 2: 동작 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -161,7 +161,7 @@ kill $STUB
 ```
 Expected: `{"rate": 1.2} 200 0.3xxs` 그리고 `404`
 
-- [ ] **Step 3: 커밋**
+- [x] **Step 3: 커밋**
 
 ```bash
 git add tools/stub-server.py
@@ -177,7 +177,7 @@ git commit -m "Add external rating API stub server"
 **Interfaces:**
 - Produces: GitHub에 공개 레포 8개 존재. `insurance-platform-poc`는 `origin`이 연결되고 main이 push됨. `demo-a-platform` 로컬 디렉터리는 **만들지 않는다**(Task 4에서 init).
 
-- [ ] **Step 1: 스크립트 작성**
+- [x] **Step 1: 스크립트 작성**
 
 ```bash
 #!/usr/bin/env bash
@@ -196,7 +196,7 @@ for repo in "${REPOS[@]}"; do
 done
 ```
 
-- [ ] **Step 2: README 작성**
+- [x] **Step 2: README 작성**
 
 ```markdown
 # insurance-platform-poc
@@ -211,7 +211,7 @@ done
 비교 대상 레포: `demo-a-platform`/`demo-a-contract`, `demo-b-platform`/`demo-b-template`/`demo-b-contract`, `demo-c-platform`/`demo-c-contract` (모두 `khkim6040` 계정).
 ```
 
-- [ ] **Step 3: 실행과 확인**
+- [x] **Step 3: 실행과 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -222,7 +222,7 @@ gh repo list khkim6040 --limit 50 --json name --jq '.[].name' | grep -E '^(demo-
 ```
 Expected: 8개 이름 출력
 
-- [ ] **Step 4: 커밋과 push**
+- [x] **Step 4: 커밋과 push**
 
 ```bash
 git add tools/bootstrap-repos.sh README.md
@@ -253,7 +253,7 @@ git push -u origin main
 **Interfaces:**
 - Produces: 플러그인 id `platform.kotlin-library`(라이브러리·스타터용), `platform.spring-boot-app`(앱용). 카탈로그 별칭 `libs.spring.boot.bom`. 모든 모듈은 Boot BOM이 `implementation` 플랫폼으로 적용된 상태에서 시작한다. 앱 모듈의 `bootJar` 산출물 이름은 `app.jar`이고 plain `jar`는 비활성화된다.
 
-- [ ] **Step 1: 레포 초기화**
+- [x] **Step 1: 레포 초기화**
 
 ```bash
 mkdir -p /Users/gwanhokim/personal-projects/insurance-poc/demo-a-platform
@@ -262,7 +262,7 @@ git init -q -b main
 git remote add origin https://github.com/khkim6040/demo-a-platform.git
 ```
 
-- [ ] **Step 2: 버전 카탈로그**
+- [x] **Step 2: 버전 카탈로그**
 
 `gradle/libs.versions.toml`:
 ```toml
@@ -283,7 +283,7 @@ kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotl
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 ```
 
-- [ ] **Step 3: 루트 설정**
+- [x] **Step 3: 루트 설정**
 
 `settings.gradle.kts`:
 ```kotlin
@@ -320,7 +320,7 @@ build/
 .kotlin/
 ```
 
-- [ ] **Step 4: build-logic**
+- [x] **Step 4: build-logic**
 
 `build-logic/settings.gradle.kts`:
 ```kotlin
@@ -409,7 +409,7 @@ tasks.named<Jar>("jar") {
 
 참고: `the<LibrariesForLibs>()`는 precompiled script plugin에서 버전 카탈로그에 타입 안전하게 접근하는 Gradle의 공식 우회 방법이고, `build-logic/build.gradle.kts`의 `files(...)` 한 줄이 그 접근자를 플러그인 클래스패스에 올린다.
 
-- [ ] **Step 5: 임시 모듈 디렉터리와 wrapper 생성**
+- [x] **Step 5: 임시 모듈 디렉터리와 wrapper 생성**
 
 include된 여섯 모듈의 디렉터리가 없으면 Gradle은 빈 프로젝트로 취급하므로 디렉터리만 만든다.
 ```bash
@@ -420,7 +420,7 @@ gradle wrapper --gradle-version 9.7.0 --distribution-type bin
 ```
 Expected: 여섯 프로젝트가 트리로 출력되고 BUILD SUCCESSFUL. `build-logic`이 컴파일되며 `platform.kotlin-library`, `platform.spring-boot-app` 플러그인이 만들어진다.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add -A
@@ -448,7 +448,7 @@ git commit -m "Add Gradle multi-project skeleton with convention plugins"
   - `class InMemoryContractRepository : ContractRepository`
   - `object SampleContracts { fun all(): List<Contract> }` — `C-1001`(ACTIVE, 1년 뒤 만기), `C-1002`(ACTIVE, 어제 만기 → 만기 처리 대상)
 
-- [ ] **Step 1: 빌드 파일**
+- [x] **Step 1: 빌드 파일**
 
 `libs/domain/build.gradle.kts`:
 ```kotlin
@@ -457,7 +457,7 @@ plugins {
 }
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `libs/domain/src/test/kotlin/io/github/khkim6040/sample/domain/ContractTest.kt`:
 ```kotlin
@@ -521,14 +521,14 @@ class ContractTest {
 }
 ```
 
-- [ ] **Step 3: 실패 확인**
+- [x] **Step 3: 실패 확인**
 
 ```bash
 ./gradlew :libs:domain:test --console=plain
 ```
 Expected: 컴파일 실패 (`Contract` 미정의)
 
-- [ ] **Step 4: 구현**
+- [x] **Step 4: 구현**
 
 `Contract.kt`:
 ```kotlin
@@ -630,14 +630,14 @@ object SampleContracts {
 }
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 ```bash
 ./gradlew :libs:domain:test --console=plain
 ```
 Expected: BUILD SUCCESSFUL, 7 tests
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add libs/domain
@@ -668,7 +668,7 @@ git commit -m "Add contract domain model with rules and in-memory repository"
   - 기본 프로퍼티(앱이 덮어쓸 수 있음): `spring.threads.virtual.enabled=true`, `spring.mvc.problemdetails.enabled=true`, `spring.http.clients.connect-timeout=2s`, `spring.http.clients.read-timeout=5s`.
   - 상수 `CorrelationId.HEADER = "X-Correlation-Id"`, `CorrelationId.MDC_KEY = "correlationId"`.
 
-- [ ] **Step 1: 빌드 파일**
+- [x] **Step 1: 빌드 파일**
 
 `platform/http-starter/build.gradle.kts`:
 ```kotlin
@@ -688,7 +688,7 @@ dependencies {
 }
 ```
 
-- [ ] **Step 2: 테스트용 앱과 실패하는 테스트 작성**
+- [x] **Step 2: 테스트용 앱과 실패하는 테스트 작성**
 
 `src/test/kotlin/io/github/khkim6040/platform/http/StarterTestApplication.kt`:
 ```kotlin
@@ -773,14 +773,14 @@ class PlatformHttpStarterTest {
 }
 ```
 
-- [ ] **Step 3: 실패 확인**
+- [x] **Step 3: 실패 확인**
 
 ```bash
 ./gradlew :platform:http-starter:test --console=plain
 ```
 Expected: 컴파일 실패 (`CorrelationId` 미정의)
 
-- [ ] **Step 4: 구현**
+- [x] **Step 4: 구현**
 
 `src/main/kotlin/io/github/khkim6040/platform/http/CorrelationId.kt`:
 ```kotlin
@@ -917,14 +917,14 @@ org.springframework.boot.EnvironmentPostProcessor=\
 io.github.khkim6040.platform.http.PlatformDefaultsEnvironmentPostProcessor
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 ```bash
 ./gradlew :platform:http-starter:test --console=plain
 ```
 Expected: BUILD SUCCESSFUL, 5 tests. `YamlPropertySourceLoader` import가 실패하면 Global Constraints의 명령으로 `spring-boot` jar 안의 실제 패키지를 찾아 고친다.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add platform/http-starter
@@ -946,7 +946,7 @@ git commit -m "Add platform-http-starter with correlation id, problem details an
 - Consumes: `ContractRepository`, `InMemoryContractRepository`, `Contract`, `PremiumCalculator` (Task 5). 스타터의 헤더·예외 매핑 (Task 6). 스텁 `/rate` 스키마 (Task 2).
 - Produces: `POST /contracts` (201, 본문 `CreateContractRequest`), `GET /contracts/{id}`, `GET /contracts/{id}/quote` → `QuoteResponse(contractId, monthlyPremium, quotedPremium)`. 포트 8080. 프로퍼티 `external.rating.base-url`(기본 `http://localhost:9090`).
 
-- [ ] **Step 1: 빌드 파일과 설정**
+- [x] **Step 1: 빌드 파일과 설정**
 
 `apps/api/build.gradle.kts`:
 ```kotlin
@@ -972,7 +972,7 @@ external:
     base-url: http://localhost:9090
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `apps/api/src/test/kotlin/io/github/khkim6040/sample/api/ApiApplicationTest.kt`:
 ```kotlin
@@ -1046,14 +1046,14 @@ class ApiApplicationTest {
 }
 ```
 
-- [ ] **Step 3: 실패 확인**
+- [x] **Step 3: 실패 확인**
 
 ```bash
 ./gradlew :apps:api:test --console=plain
 ```
 Expected: 컴파일 실패 (`QuoteClient` 미정의)
 
-- [ ] **Step 4: 구현**
+- [x] **Step 4: 구현**
 
 `ApiApplication.kt`:
 ```kotlin
@@ -1168,14 +1168,14 @@ class ContractController(
 }
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 ```bash
 ./gradlew :apps:api:test --console=plain
 ```
 Expected: BUILD SUCCESSFUL, 5 tests
 
-- [ ] **Step 6: 스텁과 함께 실제 기동 확인**
+- [x] **Step 6: 스텁과 함께 실제 기동 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -1191,7 +1191,7 @@ kill $API $STUB
 ```
 Expected: `HTTP/1.1 200`, `X-Correlation-Id: <uuid>`, 본문에 `"quotedPremium":12000`
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add apps/api
@@ -1212,7 +1212,7 @@ git commit -m "Add api app with contract endpoints and external rating client"
 - Consumes: `ContractRepository`, `InMemoryContractRepository`, `SampleContracts` (Task 5), 스타터 (Task 6).
 - Produces: `GET /admin/contracts`, `POST /admin/contracts/{id}/suspend`. 포트 8081. 기동 시 `SampleContracts.all()`을 시드.
 
-- [ ] **Step 1: 빌드 파일과 설정**
+- [x] **Step 1: 빌드 파일과 설정**
 
 `apps/admin/build.gradle.kts`:
 ```kotlin
@@ -1235,7 +1235,7 @@ server:
   port: 8081
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `apps/admin/src/test/kotlin/io/github/khkim6040/sample/admin/AdminApplicationTest.kt`:
 ```kotlin
@@ -1279,14 +1279,14 @@ class AdminApplicationTest {
 }
 ```
 
-- [ ] **Step 3: 실패 확인**
+- [x] **Step 3: 실패 확인**
 
 ```bash
 ./gradlew :apps:admin:test --console=plain
 ```
 Expected: 컴파일 실패 또는 컨텍스트 로드 실패
 
-- [ ] **Step 4: 구현**
+- [x] **Step 4: 구현**
 
 `AdminApplication.kt`:
 ```kotlin
@@ -1344,14 +1344,14 @@ class AdminContractController(private val repository: ContractRepository) {
 }
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 ```bash
 ./gradlew :apps:admin:test --console=plain
 ```
 Expected: BUILD SUCCESSFUL, 3 tests
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add apps/admin
@@ -1373,7 +1373,7 @@ git commit -m "Add admin app with contract listing and suspension"
 - Consumes: `ContractEvent`, `ContractEventType`, `ContractRepository`, `SampleContracts` (Task 5).
 - Produces: `ContractEventHandler.handle(event): HandleResult` (`PROCESSED | DUPLICATE | DEAD_LETTERED`). 프로퍼티 `consumer.max-attempts`(기본 3), `consumer.fake-source.interval`(ISO-8601, 기본 `PT2S`). 웹 서버 없음. 실험 10에서 `FakeEventSource`를 Kafka 리스너로 교체한다.
 
-- [ ] **Step 1: 빌드 파일과 설정**
+- [x] **Step 1: 빌드 파일과 설정**
 
 `apps/consumer/build.gradle.kts`:
 ```kotlin
@@ -1398,7 +1398,7 @@ consumer:
     interval: PT2S
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `apps/consumer/src/test/kotlin/io/github/khkim6040/sample/consumer/ConsumerApplicationTest.kt`:
 ```kotlin
@@ -1445,14 +1445,14 @@ class ConsumerApplicationTest {
 }
 ```
 
-- [ ] **Step 3: 실패 확인**
+- [x] **Step 3: 실패 확인**
 
 ```bash
 ./gradlew :apps:consumer:test --console=plain
 ```
 Expected: 컴파일 실패 (`ContractEventHandler` 미정의)
 
-- [ ] **Step 4: 구현**
+- [x] **Step 4: 구현**
 
 `ConsumerApplication.kt`:
 ```kotlin
@@ -1569,14 +1569,14 @@ class FakeEventSource(private val handler: ContractEventHandler) {
 }
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 ```bash
 ./gradlew :apps:consumer:test --console=plain
 ```
 Expected: BUILD SUCCESSFUL, 3 tests
 
-- [ ] **Step 6: 실제 기동 확인 (웹 서버 없이 살아 있는지)**
+- [x] **Step 6: 실제 기동 확인 (웹 서버 없이 살아 있는지)**
 
 ```bash
 ./gradlew :apps:consumer:bootJar --console=plain -q
@@ -1584,7 +1584,7 @@ timeout 12 java -jar apps/consumer/build/libs/app.jar 2>&1 | grep -E 'Tomcat|eve
 ```
 Expected: `Tomcat` 줄 없음, `event evt-1 -> PROCESSED`, `event evt-3 -> DEAD_LETTERED` 등이 보임. (`timeout`이 없으면 `brew install coreutils` 후 `gtimeout`)
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add apps/consumer
@@ -1604,7 +1604,7 @@ git commit -m "Add consumer app with idempotent retrying event handler"
 - Consumes: `ContractRepository`, `InMemoryContractRepository`, `SampleContracts`, `Contract.expireIfDue` (Task 5).
 - Produces: Job `contractExpiryJob`, Step `expireContracts`. 만기 처리 건수를 `StepContribution.writeCount`에 기록. 프로세스 종료 코드는 Job 결과를 따른다(COMPLETED → 0).
 
-- [ ] **Step 1: 빌드 파일과 설정**
+- [x] **Step 1: 빌드 파일과 설정**
 
 `apps/batch/build.gradle.kts`:
 ```kotlin
@@ -1628,7 +1628,7 @@ spring:
       name: contractExpiryJob
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `apps/batch/src/test/kotlin/io/github/khkim6040/sample/batch/ContractExpiryJobTest.kt`:
 ```kotlin
@@ -1673,14 +1673,14 @@ class ContractExpiryJobTest {
 ```
 Spring Batch 6은 `Job`, `JobParameters`, `StepContribution` 같은 핵심 타입을 `job`/`step` 하위 패키지로 옮겼다. 위 import가 실패하면 Global Constraints의 명령으로 `spring-batch-core` jar에서 위치를 찾아 import만 고친다.
 
-- [ ] **Step 3: 실패 확인**
+- [x] **Step 3: 실패 확인**
 
 ```bash
 ./gradlew :apps:batch:test --console=plain
 ```
 Expected: 컴파일 실패 또는 컨텍스트 로드 실패 (`Job` 빈 없음)
 
-- [ ] **Step 4: 구현**
+- [x] **Step 4: 구현**
 
 `BatchApplication.kt`:
 ```kotlin
@@ -1751,14 +1751,14 @@ class ContractExpiryJobConfig {
 }
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 ```bash
 ./gradlew :apps:batch:test --console=plain
 ```
 Expected: BUILD SUCCESSFUL, 2 tests
 
-- [ ] **Step 6: 실제 실행과 종료 코드 확인**
+- [x] **Step 6: 실제 실행과 종료 코드 확인**
 
 ```bash
 ./gradlew :apps:batch:bootJar --console=plain -q
@@ -1766,7 +1766,7 @@ java -jar apps/batch/build/libs/app.jar 2>&1 | grep -E 'Tomcat|expired|COMPLETED
 ```
 Expected: `Tomcat` 없음, `expired 1 contract(s)`, `status=[COMPLETED]`, `exit=0`. 프로세스가 스스로 종료되어야 한다.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add apps/batch
@@ -1782,7 +1782,7 @@ git commit -m "Add batch app with contract expiry job"
 **Interfaces:**
 - Produces: `docker build --build-arg APP=<app> .`로 네 앱 중 하나의 이미지. jar는 빌드 전에 `./gradlew :apps:<app>:bootJar`로 만들어져 있어야 한다.
 
-- [ ] **Step 1: 전체 빌드 확인**
+- [x] **Step 1: 전체 빌드 확인**
 
 ```bash
 ./gradlew build --console=plain
@@ -1790,7 +1790,7 @@ ls apps/*/build/libs/
 ```
 Expected: BUILD SUCCESSFUL. 각 앱 디렉터리에 `app.jar`만 존재 (plain jar 없음).
 
-- [ ] **Step 2: Dockerfile 작성**
+- [x] **Step 2: Dockerfile 작성**
 
 `Dockerfile`:
 ```dockerfile
@@ -1806,7 +1806,7 @@ ENTRYPOINT ["java", "-jar", "/app.jar"]
 !apps/*/build/libs/app.jar
 ```
 
-- [ ] **Step 3: 이미지 빌드와 실행 확인**
+- [x] **Step 3: 이미지 빌드와 실행 확인**
 
 ```bash
 docker build --build-arg APP=api -t demo-a-platform/api:dev . -q
@@ -1819,7 +1819,7 @@ docker rm -f api-smoke
 ```
 Expected: `batch exit=0`, `HTTP/1.1 404`, `X-Correlation-Id`, `Content-Type: application/problem+json`
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add Dockerfile .dockerignore
@@ -1838,7 +1838,7 @@ git commit -m "Add shared runtime Dockerfile parameterized by app"
 **Interfaces:**
 - Produces: `kubectl kustomize deploy/overlays/dev`가 네 워크로드를 렌더링. 이미지 이름은 `ghcr.io/khkim6040/demo-a-platform/<app>`, 태그는 overlay의 `images:`에서만 지정. `deploy/base`는 upstream 소유, `deploy/overlays`는 프로젝트 소유.
 
-- [ ] **Step 1: api base**
+- [x] **Step 1: api base**
 
 `deploy/base/api/deployment.yaml`:
 ```yaml
@@ -1892,7 +1892,7 @@ resources:
   - service.yaml
 ```
 
-- [ ] **Step 2: admin base**
+- [x] **Step 2: admin base**
 
 `deploy/base/admin/deployment.yaml`:
 ```yaml
@@ -1946,7 +1946,7 @@ resources:
   - service.yaml
 ```
 
-- [ ] **Step 3: consumer base**
+- [x] **Step 3: consumer base**
 
 `deploy/base/consumer/deployment.yaml`:
 ```yaml
@@ -1983,7 +1983,7 @@ resources:
   - deployment.yaml
 ```
 
-- [ ] **Step 4: batch base**
+- [x] **Step 4: batch base**
 
 `deploy/base/batch/cronjob.yaml`:
 ```yaml
@@ -2016,7 +2016,7 @@ resources:
   - cronjob.yaml
 ```
 
-- [ ] **Step 5: dev overlay**
+- [x] **Step 5: dev overlay**
 
 `deploy/overlays/dev/kustomization.yaml`:
 ```yaml
@@ -2039,14 +2039,14 @@ images:
     newTag: 0.1.0
 ```
 
-- [ ] **Step 6: 렌더링 확인**
+- [x] **Step 6: 렌더링 확인**
 
 ```bash
 kubectl kustomize deploy/overlays/dev | grep -E '^kind:|image:'
 ```
 Expected: `Deployment`×3, `Service`×2, `CronJob`×1, `image:` 4줄 모두 `:0.1.0`
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add deploy
@@ -2063,7 +2063,7 @@ git commit -m "Add Kustomize base and dev overlay for all apps"
 **Interfaces:**
 - Produces: main push/PR에 `ci` 워크플로(빌드 + kustomize 검증). `<app>-v<semver>` 태그 push에 `release` 워크플로가 `ghcr.io/khkim6040/demo-a-platform/<app>:<semver>` 이미지를 푸시하고 라벨 `org.opencontainers.image.revision=<sha>`를 붙인다.
 
-- [ ] **Step 1: ci.yml**
+- [x] **Step 1: ci.yml**
 
 `.github/workflows/ci.yml`:
 ```yaml
@@ -2088,7 +2088,7 @@ jobs:
         run: kubectl kustomize deploy/overlays/dev > /dev/null
 ```
 
-- [ ] **Step 2: release.yml**
+- [x] **Step 2: release.yml**
 
 `.github/workflows/release.yml`:
 ```yaml
@@ -2131,7 +2131,7 @@ jobs:
           labels: org.opencontainers.image.revision=${{ github.sha }}
 ```
 
-- [ ] **Step 3: README**
+- [x] **Step 3: README**
 
 `README.md`:
 ```markdown
@@ -2151,7 +2151,7 @@ Insurance platform PoC, A안(Fork + Upstream Merge)의 플랫폼 레포이자 �
 A안 비즈니스 프로젝트의 수정 금지 파일: `platform/**`, `build-logic/**`, `gradle/**`, 루트 빌드 파일, `apps/*/build.gradle.kts`, `Dockerfile`, `.github/**`, `deploy/base/**`.
 ```
 
-- [ ] **Step 4: 커밋과 push, CI 확인**
+- [x] **Step 4: 커밋과 push, CI 확인**
 
 ```bash
 git add .github README.md
@@ -2161,7 +2161,7 @@ gh run watch --exit-status $(gh run list --workflow ci --limit 1 --json database
 ```
 Expected: `ci` 성공. 실패하면 로그를 읽고 고친 뒤 다시 push한다. 흔한 원인은 Gradle 툴체인이 CI에서 JDK 25를 못 찾는 경우인데, `setup-java`가 설치한 JDK가 기본이므로 발생하지 않아야 한다.
 
-- [ ] **Step 5: 태그 릴리스 확인**
+- [x] **Step 5: 태그 릴리스 확인**
 
 ```bash
 git tag api-v0.1.0
@@ -2180,7 +2180,7 @@ Expected: `release` 성공, 태그 목록에 `["0.1.0"]`
 **Interfaces:**
 - Produces: Phase 1 완료 기준의 증거 목록. Phase 2 계획의 입력.
 
-- [ ] **Step 1: 기록 작성**
+- [x] **Step 1: 기록 작성**
 
 `experiments/phase1-reference-monorepo.md` (각 항목의 실제 값을 채운다):
 ```markdown
@@ -2209,7 +2209,7 @@ Expected: `release` 성공, 태그 목록에 `["0.1.0"]`
 - Gradle 모듈 <N>, 컨벤션 플러그인 2, 워크플로 2, Dockerfile 1, Kustomize 파일 <N>, Kotlin 소스 줄 수 <N> (`find . -name '*.kt' -not -path '*/build/*' | xargs wc -l`)
 ```
 
-- [ ] **Step 2: 커밋과 push**
+- [x] **Step 2: 커밋과 push**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
