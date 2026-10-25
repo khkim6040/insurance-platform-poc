@@ -72,7 +72,7 @@
 **Files:**
 - Create: `report/final.md`
 
-- [ ] **Step 1: 보고서 파일 작성(1~3절)**
+- [x] **Step 1: 보고서 파일 작성(1~3절)**
 
 `report/final.md`에 아래를 쓴다.
 
@@ -150,7 +150,7 @@ N에 비례하는 항은 세 안이 같다(1). 차이는 상수항 2(A 대 B), 1
 프로젝트 측 전파·배포·되돌림 14/12/12의 내역: contract는 실험 3(3) + 4(1) + 5(1) + 6(A 위반 1 + 머지 1, B·C yml 1 + 숫자 1 = 2) + 7(1) + 8 올림·되돌림(2) + 10(A 3, B·C 1) = A 13, B·C 11. claims는 실험 10(1)만이다(생성 시 push·태그는 생성 단계에 포함). 생성은 위 행에 따로 셌다. 합계 열에서 A와 C가 비슷하고 B가 가장 크다. 결정은 합계가 아니라 충돌 열과 손댄 파일 열의 의미에서 갈린다: A는 적은 손댐으로 많은 것을 받되 충돌을 안고, B/C는 손댐이 많되 전부 명시적이다.
 ```
 
-- [ ] **Step 2: 숫자 교차 확인**
+- [x] **Step 2: 숫자 교차 확인**
 
 보고서의 숫자가 기록과 같은지 네 곳을 눌러 본다.
 
@@ -164,7 +164,7 @@ grep -o 'A 5단계/25파일, B 4/30, C 2/0' experiments/08-version-hold-rollback
 ```
 Expected: 네 grep이 각각 한 줄씩 나온다(출처가 있음).
 
-- [ ] **Step 3: 커밋**
+- [x] **Step 3: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -178,7 +178,7 @@ git add report/final.md && git commit -q -m "Add final report: summary, criteria
 **Files:**
 - Modify: `report/final.md` (끝에 덧붙임)
 
-- [ ] **Step 1: 4~8절 덧붙이기**
+- [x] **Step 1: 4~8절 덧붙이기**
 
 `report/final.md` 끝에 아래를 덧붙인다.
 
@@ -255,7 +255,7 @@ PoC는 Spring MVC로 고정했고 WebFlux 비교는 하지 않았다(스펙 2장
 - 후속으로 채택된 안에서 할 일: 템플릿 핀 CI 검사, 두 숫자 동시 갱신 정책, 스타터 기본값 테스트, `ResourceAccessException` → 504 매핑(실험 6 관찰), Kafka·MongoDB 스타터.
 ```
 
-- [ ] **Step 2: 구조 확인**
+- [x] **Step 2: 구조 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -265,7 +265,7 @@ grep -c 'TBD\|TODO\|<[a-z가-힣]*>' report/final.md
 ```
 Expected: `## 1.`~`## 8.` 여덟 절, 판정 어휘 ≥ 3, 자리표시자 0.
 
-- [ ] **Step 3: 커밋**
+- [x] **Step 3: 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -280,7 +280,7 @@ git add report/final.md && git commit -q -m "Add final report: agent suitability
 - Modify: `README.md`
 - Modify: `docs/superpowers/plans/2026-10-25-phase7-final-report.md`
 
-- [ ] **Step 1: README에 보고서 링크**
+- [x] **Step 1: README에 보고서 링크**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -290,7 +290,7 @@ git add README.md && git commit -q -m "Link final report from README" && git log
 ```
 Expected: README에 링크 1줄.
 
-- [ ] **Step 2: 계획 체크박스 마감, push**
+- [x] **Step 2: 계획 체크박스 마감, push**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
