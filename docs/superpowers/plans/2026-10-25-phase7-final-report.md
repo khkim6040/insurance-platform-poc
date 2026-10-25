@@ -1,0 +1,302 @@
+# Phase 7: 최종 보고서 `report/final.md` 작성 계획
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** 실험 기록 9개(`00`~`08`, `10`)를 근거로 `report/final.md`를 써서 기준×실험 매트릭스, N개 프로젝트 비용 계산, 에이전트 수행 적합성, 세 목표 판정, A/B/C 추천과 비추천 안을 택할 조건을 담는다. PoC 완료.
+
+**Architecture:** 보고서는 새 측정을 하지 않는다. 모든 숫자는 `experiments/*.md`의 결과 표에서 옮기고 각 주장 옆에 실험 번호를 붙인다. 구조는 스펙 9장 Phase 7 행과 작업 방식 절이 요구하는 순서를 그대로 따른다: ① 결론 요약 ② 기준×실험 매트릭스(스펙 7.3의 10개 기준) ③ N개 비용 계산(`플랫폼 측 + 프로젝트 측 × N`) ④ 에이전트 수행 적합성(안별 무개입 완료 실험 비율, 개입 지점 목록) ⑤ 세 목표 판정(증명됨/조건부/증명 안 됨 + 실험 번호) ⑥ 추천과 비추천 안을 택할 조건 ⑦ HTTP 프레임워크 항목(MVC 고정, WebFlux 추가 시 변경 범위) ⑧ 알려진 한계와 후속. 두 커밋으로 나눈다(①~③ / ④~⑧).
+
+**Tech Stack:** Markdown만. 측정·빌드 없음.
+
+**Spec:** `docs/superpowers/specs/2026-10-24-insurance-platform-poc-design.md` (1 목적, 7.1 기록 양식, 7.3 평가 기준과 실험의 대응, 9 Phase 7 행과 작업 방식, 11 알려진 한계)
+
+## Global Constraints
+
+- 보고서 경로 `insurance-platform-poc/report/final.md`. 레포 루트 `/Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc`.
+- **새 측정 금지.** 숫자는 `experiments/00-baseline.md`, `01-create.md`, `02-multi-app-pr.md`, `03-independent-deploy.md`, `04-security-patch.md`, `05-common-http-change.md`, `06-customization.md`, `07-ci-docker-change.md`, `08-version-hold-rollback.md`, `10-new-common-feature.md`의 결과 표에서만 가져오고, 기록과 다른 숫자를 쓰지 않는다. 시간은 적지 않는다.
+- **세 목표의 출처(전제):** 스펙이 말하는 "청사진 10장의 세 목표"는 청사진 문서가 이 레포에 없어 직접 확인할 수 없다. 스펙 1장의 목적 문장 "비즈니스 프로젝트당 하나의 Monorepo(API/Admin/Consumer/Batch + 공통 도메인)를 쓰면서, 각 앱을 독립적으로 빌드·배포하고, 공통 라이브러리와 기술 설정을 중앙에서 관리"에서 ① 프로젝트당 하나의 모노레포 ② 앱별 독립 빌드·배포 ③ 공통 라이브러리·기술 설정의 중앙 관리로 도출해 쓰고, 보고서에 이 전제를 명시한다.
+- 판정 어휘는 스펙 그대로 "증명됨 / 조건부 / 증명 안 됨" 셋만 쓴다.
+- 추천은 A/B/C 중 하나를 고르고, 추천하지 않은 두 안을 택해야 하는 조건을 각각 적는다.
+- HTTP 프레임워크 항목은 "MVC 고정, WebFlux 추가 시 변경 범위"로만 정리한다(비교 없음).
+- 에이전트 개입 집계는 기록의 "에이전트 개입" 행만 센다. 계획 승인·실행 방식 선택은 세지 않는다(스펙 7.1).
+- 커밋은 영어 제목 한 줄, 본문 없음.
+
+---
+
+## 파일 구조
+
+| 파일 | 내용 |
+|---|---|
+| `report/final.md` | 최종 보고서 (Task 1에서 1~3절, Task 2에서 4~8절) |
+| `README.md` | 보고서 링크 1줄 (Task 3) |
+| `docs/superpowers/plans/2026-10-25-phase7-final-report.md` | 이 계획 (Task 3에서 체크박스 마감) |
+
+## 집계 근거 (기록에서 옮긴 값. 보고서 표의 출처)
+
+플랫폼 릴리스 6회(v1.1.0 실험 4, v1.2.0 실험 5, v1.3.0 실험 6, v1.4.0 실험 7, v1.5.0 실험 8, v1.6.0 실험 10)의 플랫폼 측 단계 수:
+
+| 실험 | A | B | C |
+|---|---|---|---|
+| 4 | 3 | 4 | 4 |
+| 5 | 3 | 4 | 4 |
+| 6 | 3 | 4 | 4 |
+| 7 | 3 | 4 | 4 |
+| 8 | 3 | 5 (템플릿 핀 별도 레포) | 4 (템플릿 핀 같은 PR) |
+| 10 | 3 | 5 | 4 |
+| 합계 | **18** | **26** | **24** |
+
+실험 4~7에서 B/C 템플릿 핀을 올리지 않았으므로(실험 8 관찰) 규칙대로 했다면 B는 매 릴리스 5, C는 4다. 보고서의 N 계산에는 이 "규칙대로" 값(A 3, B 5, C 4)을 상수항으로 쓴다.
+
+프로젝트 1개당 프로젝트 측 단계 수:
+
+| 실험 | A | B | C |
+|---|---|---|---|
+| 1 생성 | 5 (손댄 파일 25) | 4 (30) + 토큰 1회 | 2 (0) + 토큰·플랫폼 clone 1회 |
+| 3 배포 | 3 | 3 | 3 |
+| 4 | 1 (머지, 손댄 0) | 1 (1줄) | 1 |
+| 5 | 1 | 1 | 1 |
+| 6 | 위반 1 + 머지 1 (충돌 1) | yml 1 + 숫자 1 | 같음 |
+| 7 | 1 | 1 (`@v`) | 1 |
+| 8 | 생성 5 (태그 삭제 6) + 올림 1 + 되돌림 1 | 생성 4 + 1 + 1 | 생성 2 + 1 + 1 |
+| 10 contract | 3 (revert의 revert, 머지 + 충돌 2, push) 손댄 2 | 1 (3줄) | 1 |
+| 10 claims | 1 (충돌 1) | 1 (3줄) | 1 |
+
+충돌 파일 수 합계: A 4 (실험 6: 1, 실험 10: contract 2 + claims 1), B 0, C 0.
+
+에이전트 개입: 실험 1~8·10 아홉 개 중 개입이 있던 실험 — A 없음(9/9 무개입), B 실험 1(2건: 토큰 스코프 브라우저 인증, 빈 레포 삭제 승인)(8/9), C 없음(9/9). 플랫폼 구축(baseline) 개입: A 0, B 0, C 1(Group ID 분리 결정).
+
+---
+
+## Task 1: 보고서 1~3절 — 결론 요약, 기준×실험 매트릭스, N개 비용 계산
+
+**Files:**
+- Create: `report/final.md`
+
+- [ ] **Step 1: 보고서 파일 작성(1~3절)**
+
+`report/final.md`에 아래를 쓴다.
+
+```markdown
+# Insurance Platform PoC 최종 보고서
+
+- 작성일: 2026-10-25
+- 스펙: `docs/superpowers/specs/2026-10-24-insurance-platform-poc-design.md`
+- 실험 기록: `experiments/00-baseline.md` ~ `08-version-hold-rollback.md`, `10-new-common-feature.md`
+- 비교 대상: A(clone + upstream 머지), B(BOM·카탈로그·스타터 퍼블리시 + GitHub Template), C(B + `templates/multi-service/` + `tools/create-project.sh`)
+- 수행: AI 에이전트가 실험을 수행하고 사람이 결정·행동이 필요한 지점만 개입했다. 모든 숫자는 실험 기록의 결과 표에서 옮겼고 시간은 측정하지 않았다.
+
+## 1. 결론 요약
+
+**C안을 추천한다.** 세 안 모두 PoC의 세 목표 중 "프로젝트당 하나의 모노레포"와 "앱별 독립 빌드·배포"는 증명했다(실험 2, 3). 차이는 세 번째 목표 "공통 라이브러리·기술 설정의 중앙 관리"의 비용과 위험에서 났다.
+
+- A는 플랫폼 변경 한 번당 단계 수가 가장 적다(플랫폼 3 + 프로젝트 1×N). 그러나 비용이 "플랫폼 파일 불가침 규약"의 준수에 전적으로 달려 있다. 규약을 어긴 한 줄(실험 6), 플랫폼이 프로젝트 소유 파일을 건드린 두 줄(실험 10)이 각각 충돌을 만들었고, 충돌 해소 방향에 따라 플랫폼 의도나 프로젝트 의존성이 빌드 실패 없이 사라진다(의미적 충돌). 되돌린 머지는 다음 머지로 돌아오지 않는다(실험 8).
+- B/C는 플랫폼 파일이 jar 안에 있어 위반이 구조적으로 불가능하고 충돌이 0이다(실험 6, 10). 대가는 구조적 대기 1(publish), 프로젝트가 올려야 하는 숫자 2개(`platformVersion`, `@v`), 그리고 템플릿 핀 갱신이라는 숨은 릴리스 비용이다(실험 7, 8).
+- B와 C의 차이는 생성과 플랫폼 레포 수에서만 난다. C는 생성이 명령 하나(2단계, 손댄 파일 0 vs B 4단계, 30파일)이고 템플릿이 플랫폼 레포 안에 있어 핀 갱신이 같은 PR에 묶이며 publish 순서 의존이 없다(실험 1, 8, 10). 에이전트 개입도 실험 중 0이었다.
+
+A를 택해야 하는 조건과 B를 택해야 하는 조건은 6절에 적었다.
+
+## 2. 기준 × 실험 매트릭스
+
+스펙 7.3의 평가 기준 10개를 그 기준에 대응하는 실험의 결과 표로 채웠다. 값은 모두 해당 기록 파일의 결과 표에서 옮긴 것이다.
+
+| 평가 기준 | 실험 | A | B | C | 판정 |
+|---|---|---|---|---|---|
+| 신규 프로젝트 생성 편의성 | 1, 8 | 5단계, 손댄 파일 25. 플랫폼 릴리스가 쌓일수록 지울 upstream 태그가 늘어남(1 → 6) | 4단계, 손댄 파일 30. 개발자당 1회 GitHub Packages 토큰 | **2단계, 손댄 파일 0**(`create-project.sh` 한 명령 + push). 개발자당 1회 토큰 + 플랫폼 레포 clone | C |
+| 모노레포 개발 생산성 | 2 | PR 1개(8파일: domain 4, api 2, consumer 2). 다중 레포 환산 PR 3개 + 퍼블리시 대기 1. 생성자 변경이 컴파일 시점에 모든 호출처를 드러냄 | 동일(플랫폼 무관) | 동일 | 동일 |
+| 공통 의존성 버전 관리 효율 | 4 | 플랫폼 3단계(toml 2줄 + 컨벤션 플러그인 1줄) + 프로젝트 머지 1(손댄 0). 네 앱 `3.1.7 → 3.1.8` | 플랫폼 4단계(toml + BOM 1줄, publish 대기) + 프로젝트 숫자 1줄 | B와 같음 | 결과 동일. 단계 A 4 / B·C 5 |
+| 긴급 보안 패치 대응 | 4 | 구조적 대기 0(upstream 커밋 즉시 fetch) | 구조적 대기 1(publish 완료까지) | 같음 | A가 한 단계 빠름 |
+| 서비스별 빌드·배포 독립성 | 3 | 3단계(코드, overlay `newTag` + 태그, revert). CI가 `:apps:api:bootJar`만 실행, `api:1.1.0`만 생성 | 같음(reusable workflow 경로) | 같음 | 동일 |
+| 공통 코드 변경 전파 비용 | 5, 7, 10 | 플랫폼 3 + 프로젝트 1(머지, 손댄 0). 코드·Dockerfile·빌드 설정이 한 머지로 함께 옴. 새 스타터는 앱 빌드 파일 머지로 **자동 적용**(claims 손댄 0) | 플랫폼 4~5 + 프로젝트 1줄. 변경 종류에 따라 올리는 숫자가 다름(코드 `platformVersion`, Dockerfile·워크플로 `@v`). `@v`를 안 올리면 릴리스는 성공하고 옛 Dockerfile을 씀(조용한 미반영, 실험 7). 새 스타터는 **opt-in**(앱당 1줄, 실험 10) | B와 같음. 템플릿 배선은 같은 PR | 단계는 A, 범위 선택은 B/C |
+| Merge Conflict 및 Semantic Conflict | 6, 10, 모든 실험의 충돌 행 | 충돌 파일 합계 **4**(실험 6: 1, 실험 10: contract 2·claims 1). 두 종류 모두 관찰: 프로젝트가 플랫폼 파일을 고침(6), 플랫폼이 프로젝트 소유 README를 고침(10). `--ours` 해소 시 플랫폼 의도(4s)가 조용히 소실 | **0**. 위반이 구조적으로 불가능(jar). 오버라이드가 앱 `application.yml`에 남아 두 의도가 모두 읽힘 | 0 | B/C |
+| 플랫폼 자체 유지보수 비용 | baseline, 플랫폼 측 행 | 레포 1, 아티팩트 0, 워크플로 2, 추적 파일 71. 릴리스 6회 플랫폼 측 합계 **18**단계 | 레포 2, Maven 3(→ 6단계 뒤 5) + reusable workflow 1, 워크플로 3 + 템플릿 2, 추적 파일 32 + 57. 합계 **26**(템플릿 핀을 매번 올렸다면 30) | 레포 1, 아티팩트 B와 같음, 스크립트 1(41줄), 추적 파일 90. 합계 **24** | A |
+| 프로젝트 수 증가에 따른 복잡성 | 8, 3절 N 계산 | 프로젝트 측은 N에 비례해 1(머지)씩. 각 프로젝트의 플랫폼 버전은 git 이력에만 있어 레포 밖에서 읽을 수 없음. 되돌린 머지 재적용에 revert의 revert가 필요 | 프로젝트 측 1(숫자)씩. 전 프로젝트의 버전 분포를 `grep platformVersion`으로 읽음. 되돌림·재적용이 숫자 쓰기 | B와 같음 | B/C |
+| 에이전트 수행 적합성 | 모든 실험의 에이전트 개입 행, baseline | 실험 9/9 무개입, 플랫폼 구축 개입 0 | 실험 8/9 무개입(실험 1에서 2건), 플랫폼 구축 개입 0 | 실험 9/9 무개입, 플랫폼 구축 개입 1(Group ID 분리) | A·C |
+
+판정 열은 그 기준에서 유리한 안이다. 동일은 세 안이 같다는 뜻이고, 결과가 같고 단계만 다른 경우는 단계가 적은 안을 적었다.
+
+## 3. 프로젝트 N개일 때 비용
+
+스펙 7.1의 식 `플랫폼 측 + 프로젝트 측 × N`을 실험 4~10의 실측 단계 수로 채운다. 단계 하나는 "PR → CI → 머지" 또는 "commit → push → CI" 하나다.
+
+### 3.1 플랫폼 변경 1회의 전파 비용
+
+| 항목 | A | B | C | 출처 |
+|---|---|---|---|---|
+| 플랫폼 측 상수 | 3 (코드, PR, 태그) | 5 (코드, PR, 태그, publish 대기, 템플릿 레포 핀) | 4 (코드 + 템플릿 핀 같은 PR, PR, 태그, publish 대기) | 실험 4~10 플랫폼 측 행. B/C 실험 4~7은 핀을 빠뜨려 4였고 실험 8에서 따라잡음 |
+| 프로젝트 측 × N | 1 (머지). 충돌 시 해소가 그 안에 포함되나 해소 정책이 필요 | 1 (숫자 1줄. Dockerfile·워크플로 변경이면 `@v` 1줄, 둘 다면 2줄) | B와 같음 | 실험 4, 5, 6, 7, 8, 10 |
+| 새 스타터 채택 시 추가 | 0 (앱 빌드 파일이 머지로 들어옴) | 앱당 1줄(단계 수는 그대로 1) | 같음 | 실험 10 |
+
+| N | A | B | C |
+|---|---|---|---|
+| 1 | 4 | 6 | 5 |
+| 2 | 5 | 7 | 6 |
+| 5 | 8 | 10 | 9 |
+| 10 | 13 | 15 | 14 |
+| 20 | 23 | 25 | 24 |
+
+N에 비례하는 항은 세 안이 같다(1). 차이는 상수항 2(A 대 B), 1(A 대 C)이며 N이 커질수록 비중이 줄어든다. 숫자가 말하지 않는 것은 위험의 방향이다. A의 프로젝트 측 1은 충돌 해소를 포함할 수 있고(PoC에서 프로젝트 2개, 릴리스 6회 동안 충돌 파일 4), B/C의 1은 숫자를 올리지 않거나 두 숫자 중 하나만 올려도 실패하지 않는 조용한 미반영을 포함한다(실험 7).
+
+### 3.2 PoC 전체(릴리스 6회, 프로젝트 2개)의 실측 합계
+
+| 항목 | A | B | C |
+|---|---|---|---|
+| 플랫폼 측(실측) | 18 | 26 | 24 |
+| 프로젝트 생성(contract + claims) | 10 | 8 | 4 |
+| 프로젝트 측 전파·배포·되돌림(실측, 두 프로젝트 합) | 14 | 12 | 12 |
+| 합계 | **42** | **46** | **40** |
+| 충돌 파일 | 4 | 0 | 0 |
+| 손댄 파일(생성 제외, 전파만) | 4 (실험 6 위반 1, 실험 10 충돌 해소 contract 2·claims 1) | 13 | 13 |
+
+프로젝트 측 전파·배포·되돌림 14/12/12의 내역: contract는 실험 3(3) + 4(1) + 5(1) + 6(A 위반 1 + 머지 1, B·C yml 1 + 숫자 1 = 2) + 7(1) + 8 올림·되돌림(2) + 10(A 3, B·C 1) = A 13, B·C 11. claims는 실험 10(1)만이다(생성 시 push·태그는 생성 단계에 포함). 생성은 위 행에 따로 셌다. 합계 열에서 A와 C가 비슷하고 B가 가장 크다. 결정은 합계가 아니라 충돌 열과 손댄 파일 열의 의미에서 갈린다: A는 적은 손댐으로 많은 것을 받되 충돌을 안고, B/C는 손댐이 많되 전부 명시적이다.
+```
+
+- [ ] **Step 2: 숫자 교차 확인**
+
+보고서의 숫자가 기록과 같은지 네 곳을 눌러 본다.
+
+```bash
+cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
+grep -c '' report/final.md
+grep -o 'contract \*\*2\*\*' experiments/10-new-common-feature.md | head -1
+grep -o '2: ① gh 토큰' experiments/01-create.md | head -1
+grep -o '추적 파일 수 | 71 | 32 + 템플릿 레포 57 | 90' experiments/00-baseline.md | head -1
+grep -o 'A 5단계/25파일, B 4/30, C 2/0' experiments/08-version-hold-rollback.md | head -1
+```
+Expected: 네 grep이 각각 한 줄씩 나온다(출처가 있음).
+
+- [ ] **Step 3: 커밋**
+
+```bash
+cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
+git add report/final.md && git commit -q -m "Add final report: summary, criteria matrix, N-project cost model" && git log --oneline -1
+```
+
+---
+
+## Task 2: 보고서 4~8절 — 에이전트 적합성, 세 목표 판정, 추천, WebFlux 범위, 한계
+
+**Files:**
+- Modify: `report/final.md` (끝에 덧붙임)
+
+- [ ] **Step 1: 4~8절 덧붙이기**
+
+`report/final.md` 끝에 아래를 덧붙인다.
+
+```markdown
+## 4. 에이전트 수행 적합성
+
+실험 1~8·10(아홉 개)과 플랫폼 구축(Phase 1·3·4, baseline)에서 에이전트가 멈추고 사람의 결정이나 행동을 받은 지점을 기록의 "에이전트 개입" 행에서 모았다. 계획 승인과 실행 방식 선택 같은 워크플로 게이트는 세지 않았다(스펙 7.1).
+
+| | A | B | C |
+|---|---|---|---|
+| 무개입 완료 실험 | **9/9 (100%)** | 8/9 (89%) | **9/9 (100%)** |
+| 실험 중 개입 건수 | 0 | 2 | 0 |
+| 플랫폼 구축 중 개입 | 0 | 0 | 1 |
+| 합계 | 0 | 2 | 1 |
+
+개입 지점 목록:
+
+1. **B, 실험 1 — gh 토큰 스코프.** GitHub Packages 읽기와 레포 삭제에 `read:packages`·`delete_repo` 스코프가 필요해 브라우저 인증을 사람이 수행했다(개발자당 1회). 사내 Nexus라면 자격 증명 배포 절차에 해당한다.
+2. **B, 실험 1 — 빈 레포 재생성 승인.** Phase 0이 미리 만든 빈 레포를 지우고 GitHub Template으로 다시 만들지 사람이 결정했다(삭제 승인). 부트스트랩 순서를 바꾸면 사라지는 개입이다.
+3. **C, 플랫폼 구축 — Group ID 분리.** 같은 계정의 두 플랫폼 레포(B·C)가 같은 Maven 좌표를 퍼블리시해 422로 거부되고 C 레포 URL이 B 아티팩트를 내어 주는 상황에서 `cplatform`으로 분리하는 방안을 사람이 결정했다. 운영에서는 플랫폼 레포가 하나이므로 생기지 않는다. B와 C를 한 계정에서 동시에 실험한 PoC 설계의 산물이다.
+
+에이전트가 스스로 해결해 개입으로 세지 않은 것들도 성격이 갈린다. A에서는 충돌 해소 정책(실험 6 `--ours`, 실험 10 양쪽 유지, README 프로젝트 유지)을 계획에 미리 적어 둔 덕에 개입이 0이었다. 정책이 없었다면 충돌마다 사람이 방향을 정해야 했다. B/C에서는 어느 숫자를 올릴지(실험 7 `@v`)와 템플릿 핀 갱신(실험 8)을 에이전트가 변경 내용을 읽고 판단했고, 실험 4~7에서 핀 갱신을 네 번 빠뜨렸다. 이것은 개입이 아니라 누락이며, 사람도 같은 자리에서 빠뜨릴 가능성이 크다.
+
+정리하면, 에이전트에게 A의 어려움은 "충돌이 났을 때 무엇을 남길지"이고 사전 정책으로 없앨 수 있다. B/C의 어려움은 "실패하지 않는 누락"이고 CI 검사(예: 템플릿 핀이 최신 태그와 같은지)로 없앨 수 있다. 두 종류 모두 자동화 가능하지만, A의 정책은 충돌마다 사람이 다시 판단할 여지를 남기고 B/C의 검사는 한 번 만들면 끝난다.
+
+## 5. 세 목표 판정
+
+스펙 1장의 목적 문장에서 세 목표를 도출했다(청사진 원문은 이 레포에 없다). 판정은 스펙 9장의 어휘 "증명됨 / 조건부 / 증명 안 됨"을 쓴다.
+
+| 목표 | 판정 | 근거 실험 | 내용 |
+|---|---|---|---|
+| ① 프로젝트당 하나의 모노레포(API/Admin/Consumer/Batch + 공통 도메인) | **증명됨** | 1, 2 | 네 앱과 도메인이 한 레포에서 빌드·기동한다(실험 1, 세 안). 도메인 변경 + api + consumer 반영이 PR 1개(8파일)로 끝나고 다중 레포 환산 PR 3개·퍼블리시 대기 1을 없앴다. 생성자 변경이 컴파일 시점에 모든 호출처를 드러냈다(실험 2). 세 안 공통 |
+| ② 앱별 독립 빌드·배포 | **증명됨** | 3 | `api-v1.1.0` 태그에 CI가 `:apps:api:bootJar`만 실행하고 `api:1.1.0`만 만들었다. overlay revert로 롤백, 세 안 동일 |
+| ③ 공통 라이브러리·기술 설정의 중앙 관리 | **조건부** | 4, 5, 6, 7, 8, 10 | 의존성 버전(4), 공통 코드(5), Dockerfile(7), 새 스타터(10)가 세 안 모두 중앙에서 전 프로젝트로 전파됐다. 조건이 안마다 다르다. **A**: 플랫폼 파일 불가침 규약을 프로젝트와 플랫폼 양쪽이 지켜야 한다(어긴 경우 실험 6 충돌 1, 10 충돌 3). **B/C**: 변경 종류에 맞는 숫자를 올려야 하고(7), 템플릿 핀을 릴리스마다 갱신해야 한다(8). 그리고 **B/C는 컨벤션 플러그인(`build-logic`)이 템플릿에 복사되어 중앙 관리되지 않는다**(baseline). 실험 4에서 A는 컨벤션 플러그인에 BOM 한 줄을 넣었지만 B/C는 `platform-bom`으로 우회했다. 빌드 설정의 중앙 관리는 B/C에서 BOM·카탈로그가 닿는 범위까지다 |
+
+## 6. 추천과 조건
+
+**추천: C안.** 이유는 1절과 매트릭스의 판정 열이다. B/C의 구조적 안전(충돌 0, 위반 불가, 버전 가독성)을 그대로 가지면서 생성이 가장 싸고(2단계, 손댄 파일 0), 플랫폼 레포가 하나라 템플릿 핀이 플랫폼 PR에 묶이고 publish 순서 의존이 없다. 에이전트 개입도 실험 중 0이었다(플랫폼 구축의 1건은 PoC 설계의 산물).
+
+C를 채택할 때 먼저 할 일(실험이 드러낸 누락 지점):
+
+- 템플릿 핀(`templates/multi-service/gradle.properties`, `release.yml`)이 릴리스 태그와 같은지 검사하는 CI 단계. 실험 4~7의 네 번 누락을 막는다.
+- "모든 릴리스에 `platformVersion`과 `@v`를 같이 올린다" 정책 채택 여부 결정. 채택하면 프로젝트 측은 항상 2줄이지만 실험 7의 조용한 미반영이 없어진다.
+- 스타터 기본값 자체를 단언하는 테스트(실험 6 관찰: 현재 테스트는 기본값 변경을 잡지 못한다). 세 안 공통.
+
+**A를 택해야 하는 조건:**
+
+- 프로젝트 수가 작고(N ≤ 2~3) 플랫폼 변경이 잦아 상수항 차이(릴리스당 1~2단계)가 체감되며, 코드·빌드 설정·Dockerfile·워크플로를 머지 하나로 받는 단순함을 우선할 때.
+- 컨벤션 플러그인·`deploy/base`까지 중앙에서 바꿔야 할 때(B/C는 복사본이라 전파되지 않는다).
+- 그리고 규약을 CI로 강제할 수 있을 때. 플랫폼 레포 CI가 프로젝트 소유 파일(README, `apps/*/src/**`) 변경을 거부하고, 프로젝트 레포 CI가 upstream 소유 파일 변경을 거부해야 한다. 실험 6·10의 충돌 4건은 모두 이 검사가 있었다면 PR 단계에서 막혔다. 또 "충돌 해소는 양쪽 유지, 플랫폼 파일은 플랫폼 우선" 같은 해소 정책을 문서화해야 한다.
+
+**B를 택해야 하는 조건:**
+
+- 프로젝트 생성을 GitHub Template UI(웹에서 "Use this template")로 개발자가 직접 하게 하고 싶을 때. C의 스크립트는 플랫폼 레포 clone과 셸이 필요하다.
+- 템플릿 레포를 플랫폼 레포와 다른 권한·소유 팀으로 운영해야 할 때.
+- 이 경우 템플릿 핀 갱신은 publish 완료 뒤 별도 레포에서 해야 하므로(실험 8) publish 워크플로가 템플릿 레포에 PR을 올리는 자동화를 함께 두어야 한다.
+
+## 7. HTTP 프레임워크 (MVC 고정, WebFlux 추가 시 변경 범위)
+
+PoC는 Spring MVC로 고정했고 WebFlux 비교는 하지 않았다(스펙 2장). WebFlux가 필요해질 때 바뀌는 범위는 다음과 같다. 세 안 모두 같다.
+
+- `platform-http-starter`: `io.github.khkim6040.platform.http.servlet` 옆에 `…http.reactive` 패키지를 추가하고 `WebFilter` 기반 Correlation 필터와 `@RestControllerAdvice` 예외 핸들러를 작성한다. 자동 구성 클래스에 `@ConditionalOnWebApplication(type = REACTIVE)`를 붙여 `AutoConfiguration.imports`에 한 줄 더한다. 프레임워크 중립 패키지(`CorrelationId`, ProblemDetail 규약)와 `platform-defaults.yml`은 그대로다(`spring.mvc.problemdetails.enabled`는 `spring.webflux.problemdetails.enabled`를 나란히 추가).
+- 앱: WebFlux를 쓰는 앱만 `spring-boot-starter-webmvc` 대신 `spring-boot-starter-webflux`를 고르도록 스타터가 두 웹 스타터를 `api`로 강제하지 않게 바꿔야 한다(현재는 webmvc를 `api`로 가져간다). 즉 `platform-http-starter`를 `http-core`(중립) + `http-mvc` + `http-webflux`로 승격하는 모듈 분리가 그때 일어난다. 스펙 2장이 예정한 대로 패키지를 모듈로 올리는 작업이다.
+- 관측성·복원력 스타터: 변경 없음. Actuator·Micrometer·Resilience4j는 두 스택을 모두 지원한다.
+- 전파: 모듈이 하나 늘어나는 변경이므로 실험 10과 같은 경로다. A는 `platform/` 모듈 + 앱 빌드 파일 머지, B/C는 아티팩트 + BOM 제약 + 카탈로그 별칭 + 앱당 1줄.
+
+## 8. 알려진 한계와 후속
+
+- 수행자가 에이전트라 "수동 단계 수"는 사람의 체감 난이도와 다를 수 있다(스펙 11). 관찰 항목의 "잘못하기 쉬운 지점"으로 보완했다.
+- 세 목표는 청사진 원문이 아니라 스펙 1장의 목적 문장에서 도출했다. 청사진 10장의 문구가 다르면 5절의 매핑을 다시 확인해야 한다.
+- B와 C의 플랫폼 코드는 같고 한 계정에서 동시에 실험했다. Group ID 분리(`cplatform`)와 그 개입 1건은 이 설정의 산물이며 운영에는 없다.
+- 실험 2는 한 번만 수행했다(플랫폼 무관). 실험 4~7에서 B/C 템플릿 핀을 빠뜨린 것은 실험 8에서 발견해 기록했고, 보고서의 N 계산은 "규칙대로" 값으로 보정했다.
+- 측정하지 않은 것: 시간, Virtual Threads 성능, 클러스터 배포, Kafka·MongoDB 스타터, 컨벤션 플러그인의 Gradle 플러그인 퍼블리시(B/C의 빌드 설정 중앙 관리 공백을 메울 후보. 실험 7 결과를 본 뒤 판단하기로 했으며, 실험 10까지 B/C의 빌드 설정 변경 수요가 없어 아직 판단 근거가 없다).
+- 후속으로 채택된 안에서 할 일: 템플릿 핀 CI 검사, 두 숫자 동시 갱신 정책, 스타터 기본값 테스트, `ResourceAccessException` → 504 매핑(실험 6 관찰), Kafka·MongoDB 스타터.
+```
+
+- [ ] **Step 2: 구조 확인**
+
+```bash
+cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
+grep -n '^## ' report/final.md
+grep -c '증명됨\|조건부\|증명 안 됨' report/final.md
+grep -c 'TBD\|TODO\|<[a-z가-힣]*>' report/final.md
+```
+Expected: `## 1.`~`## 8.` 여덟 절, 판정 어휘 ≥ 3, 자리표시자 0.
+
+- [ ] **Step 3: 커밋**
+
+```bash
+cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
+git add report/final.md && git commit -q -m "Add final report: agent suitability, goal verdicts, recommendation" && git log --oneline -1
+```
+
+---
+
+## Task 3: README 링크와 계획 마감
+
+**Files:**
+- Modify: `README.md`
+- Modify: `docs/superpowers/plans/2026-10-25-phase7-final-report.md`
+
+- [ ] **Step 1: README에 보고서 링크**
+
+```bash
+cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
+perl -pi -e 's|^(- 실험 기록과 Phase 완료 기록: `experiments/`)$|$1\n- 최종 보고서: `report/final.md`|' README.md
+grep -n 'report/final.md' README.md
+git add README.md && git commit -q -m "Link final report from README" && git log --oneline -1
+```
+Expected: README에 링크 1줄.
+
+- [ ] **Step 2: 계획 체크박스 마감, push**
+
+```bash
+cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
+P=docs/superpowers/plans/2026-10-25-phase7-final-report.md
+perl -pi -e 's/^- \[ \]/- [x]/' $P
+printf 'unticked=%s ticked=%s\n' "$(grep -c '^- \[ \]' $P)" "$(grep -c '^- \[x\]' $P)"
+git add $P && git commit -q -m "Mark Phase 7 plan complete" && git push -q origin main && git status --porcelain | wc -l
+```
+Expected: `unticked=0`, 작업 트리 0.
