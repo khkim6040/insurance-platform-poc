@@ -76,7 +76,7 @@
 **Files:**
 - Modify: `$S/poc.sh` (`actuator_probe`, `deps_has` 추가)
 
-- [ ] **Step 1: 열 개 레포가 모두 Global Constraints의 시작 상태인지 확인**
+- [x] **Step 1: 열 개 레포가 모두 Global Constraints의 시작 상태인지 확인**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc
@@ -86,7 +86,7 @@ done
 ```
 Expected: SHA가 Global Constraints와 같고 `dirty=0 branch=main`.
 
-- [ ] **Step 2: `poc.sh`에 두 함수 추가**
+- [x] **Step 2: `poc.sh`에 두 함수 추가**
 
 `$S/poc.sh` 끝에 덧붙인다:
 
@@ -111,14 +111,14 @@ deps_has() {
 
 `traced-log-lines`는 요청 범위 로그가 있어야 1 이상이므로, 검증 시 `api_up` 전에 `export LOGGING_LEVEL_WEB=DEBUG`를 하고 끝난 뒤 `unset` 한다(Boot는 Micrometer Tracing이 classpath에 있으면 콘솔 패턴에 `[traceId-spanId]` 49자 필드를 넣는다. 로거 이름은 환경변수로 넘기면 소문자로 바인딩되므로 로그 그룹 `web`을 쓴다).
 
-- [ ] **Step 3: 함수 로드 확인**
+- [x] **Step 3: 함수 로드 확인**
 
 ```bash
 source $S/poc.sh && type actuator_probe deps_has | head -2
 ```
 Expected: 두 함수가 `shell function`으로 나온다.
 
-- [ ] **Step 4: 계획 파일 커밋**
+- [x] **Step 4: 계획 파일 커밋**
 
 ```bash
 cd /Users/gwanhokim/personal-projects/insurance-poc/insurance-platform-poc
@@ -137,7 +137,7 @@ git push -q origin main
 **Interfaces:**
 - Produces: A contract의 `apps/api/build.gradle.kts`가 upstream과 달라져 Task 5의 머지 충돌 조건이 된다. B/C는 프로젝트 소유 파일이라 충돌이 구조적으로 불가능하다.
 
-- [ ] **Step 1: 세 contract에 `commons-lang3` 줄 추가**
+- [x] **Step 1: 세 contract에 `commons-lang3` 줄 추가**
 
 삽입 위치는 세 레포 모두 "http-starter 의존성 줄 바로 아래"(플랫폼이 Task 2~4에서 스타터를 넣는 자리와 같다). 버전은 Boot BOM(A는 convention, B/C는 platform-bom 경유)이 관리한다.
 
@@ -151,7 +151,7 @@ grep -n 'commons-lang3' demo-{a,b,c}-contract/apps/api/build.gradle.kts
 ```
 Expected: 세 파일에 각 1줄, http-starter 줄 다음 행.
 
-- [ ] **Step 2: 세 contract 빌드(api만) 확인**
+- [x] **Step 2: 세 contract 빌드(api만) 확인**
 
 ```bash
 source $S/poc.sh
@@ -159,7 +159,7 @@ for r in demo-a-contract demo-b-contract demo-c-contract; do (cd $ROOT/$r && ./g
 ```
 Expected: 세 줄 `ok`.
 
-- [ ] **Step 3: 커밋·push·CI**
+- [x] **Step 3: 커밋·push·CI**
 
 ```bash
 for r in demo-a-contract demo-b-contract demo-c-contract; do
@@ -180,7 +180,7 @@ Expected: 세 SHA, 세 `ok`. SHA는 기록용으로 메모(기록의 "프로젝�
 **Interfaces:**
 - Produces: `v1.6.0` 태그. 스타터 소스는 Task 3·4가 그대로 복사한다(B/C는 `build.gradle.kts`에 `maven-publish`만 더한다).
 
-- [ ] **Step 1: 브랜치와 카탈로그 버전**
+- [x] **Step 1: 브랜치와 카탈로그 버전**
 
 ```bash
 cd $ROOT/demo-a-platform && git checkout -q -b observability-resilience-starters
@@ -189,7 +189,7 @@ grep -n resilience4j gradle/libs.versions.toml
 ```
 Expected: `[versions]`에 1줄, `[libraries]`에 1줄.
 
-- [ ] **Step 2: observability-starter 빌드 파일**
+- [x] **Step 2: observability-starter 빌드 파일**
 
 `platform/observability-starter/build.gradle.kts`:
 
@@ -210,7 +210,7 @@ dependencies {
 }
 ```
 
-- [ ] **Step 3: observability-starter 기본값과 프로세서**
+- [x] **Step 3: observability-starter 기본값과 프로세서**
 
 `platform/observability-starter/src/main/resources/platform-observability-defaults.yml`:
 
@@ -261,7 +261,7 @@ class PlatformObservabilityEnvironmentPostProcessor : EnvironmentPostProcessor {
 }
 ```
 
-- [ ] **Step 4: observability-starter 테스트**
+- [x] **Step 4: observability-starter 테스트**
 
 `platform/observability-starter/src/test/kotlin/io/github/khkim6040/platform/observability/ObservabilityTestApplication.kt`:
 
@@ -316,7 +316,7 @@ class PlatformObservabilityStarterTest {
 }
 ```
 
-- [ ] **Step 5: resilience-starter 빌드 파일**
+- [x] **Step 5: resilience-starter 빌드 파일**
 
 `platform/resilience-starter/build.gradle.kts`:
 
@@ -333,7 +333,7 @@ dependencies {
 }
 ```
 
-- [ ] **Step 6: resilience-starter 기본값과 프로세서**
+- [x] **Step 6: resilience-starter 기본값과 프로세서**
 
 `platform/resilience-starter/src/main/resources/platform-resilience-defaults.yml`:
 
@@ -383,7 +383,7 @@ class PlatformResilienceEnvironmentPostProcessor : EnvironmentPostProcessor {
 }
 ```
 
-- [ ] **Step 7: resilience-starter 테스트**
+- [x] **Step 7: resilience-starter 테스트**
 
 `platform/resilience-starter/src/test/kotlin/io/github/khkim6040/platform/resilience/ResilienceTestApplication.kt`:
 
@@ -460,7 +460,7 @@ class PlatformResilienceStarterTest {
 }
 ```
 
-- [ ] **Step 8: settings·앱 빌드 파일·README 배선**
+- [x] **Step 8: settings·앱 빌드 파일·README 배선**
 
 ```bash
 cd $ROOT/demo-a-platform
@@ -472,7 +472,7 @@ git diff --stat
 ```
 Expected: 5파일 변경(toml, settings, api, admin, README).
 
-- [ ] **Step 9: 스타터 테스트 실행**
+- [x] **Step 9: 스타터 테스트 실행**
 
 ```bash
 cd $ROOT/demo-a-platform && ./gradlew :platform:observability-starter:test :platform:resilience-starter:test --console=plain -q 2>&1 | tail -20
@@ -481,7 +481,7 @@ Expected: 출력 없음(테스트 5개 통과). 실패하면 원인을 본다.
 - `Tracer` 빈 없음 → `spring-boot-starter-opentelemetry`가 브리지를 안 가져온 것. `api("io.micrometer:micrometer-tracing-bridge-otel")`을 observability 빌드 파일에 추가하고 재실행.
 - resilience 컨텍스트 기동 실패(`NoClassDefFoundError`, `BeanCreationException` 등 Boot 4.1 비호환) → **Step 9b**.
 
-- [ ] **Step 9b (resilience4j가 Boot 4.1에서 안 뜰 때만): Spring Framework 7 `@Retryable` 대체안**
+- [x] **Step 9b (resilience4j가 Boot 4.1에서 안 뜰 때만): Spring Framework 7 `@Retryable` 대체안**
 
 스펙 8장의 대체안: Retry만 제공, Circuit Breaker 제외. 아래로 바꾸고 Step 9를 다시 돈다. 기록(Task 7)의 복원력 내용을 "Retry만"으로 적는다.
 
@@ -570,7 +570,7 @@ class PlatformResilienceStarterTest {
 
 `gradle/libs.versions.toml`의 `resilience4j` 두 줄은 지운다. `actuator_probe`의 `cb` 행은 404가 정상이 된다(기록에 그대로 적는다).
 
-- [ ] **Step 10: 전체 빌드와 로컬 기동 검증**
+- [x] **Step 10: 전체 빌드와 로컬 기동 검증**
 
 ```bash
 cd $ROOT/demo-a-platform && ./gradlew build --console=plain -q 2>&1 | grep -E 'FAIL|error:' || echo "build ok"; tests_total .
@@ -580,7 +580,7 @@ unset LOGGING_LEVEL_WEB
 ```
 Expected: 빌드 통과, 테스트 총수(이전 25 + 5 = 30 근처, 실측 기록). `health 200`, `prom-app-tag` ≥ 1, `cb 200`(9b면 404), `traced-log-lines` ≥ 1, `export-errors 0`. `prom-app-tag`가 0이면 `management.observations.key-values`가 http.server.requests에 안 붙은 것이므로 멈추고 보고한다.
 
-- [ ] **Step 11: 커밋 분리 → PR → 머지 → 태그**
+- [x] **Step 11: 커밋 분리 → PR → 머지 → 태그**
 
 ```bash
 cd $ROOT/demo-a-platform
@@ -603,7 +603,7 @@ Expected: PR 번호(#6 예상), 머지 SHA = `v1.6.0`, main CI `ok`. 플랫폼 �
 - Modify: `demo-b-platform/gradle/libs.versions.toml`, `settings.gradle.kts`, `platform-bom/build.gradle.kts`, `platform-catalog/build.gradle.kts`
 - Modify: `demo-b-template/gradle.properties`, `.github/workflows/release.yml`, `apps/api/build.gradle.kts`, `apps/admin/build.gradle.kts`
 
-- [ ] **Step 1: 브랜치, 카탈로그 버전, 스타터 소스 복사**
+- [x] **Step 1: 브랜치, 카탈로그 버전, 스타터 소스 복사**
 
 A에서 통과한 소스를 그대로 가져온다(Step 9b를 탔다면 그 결과물이 복사된다).
 
@@ -632,7 +632,7 @@ git status --short | wc -l; grep -c 'starter' platform-bom/build.gradle.kts plat
 ```
 Expected: bom 3, catalog 3, settings 3 (`http`+2). 9b를 탔다면 toml의 resilience4j 두 줄은 넣지 않는다.
 
-- [ ] **Step 2: 빌드·publishToMavenLocal 검증**
+- [x] **Step 2: 빌드·publishToMavenLocal 검증**
 
 ```bash
 cd $ROOT/demo-b-platform && ./gradlew build publishToMavenLocal -PplatformVersion=0.0.0-LOCAL --console=plain -q 2>&1 | grep -E 'FAIL|error:' || echo "build ok"
@@ -640,7 +640,7 @@ ls ~/.m2/repository/io/github/khkim6040/platform/ | tr '\n' ' '
 ```
 Expected: exit 0, 디렉터리에 `platform-observability-starter platform-resilience-starter` 포함.
 
-- [ ] **Step 3: 커밋 → PR → 태그 → publish 대기**
+- [x] **Step 3: 커밋 → PR → 태그 → publish 대기**
 
 ```bash
 cd $ROOT/demo-b-platform
@@ -651,7 +651,7 @@ run_wait demo-b-platform publish
 ```
 Expected: PR(#6 예상), publish `ok`. 아티팩트 존재는 Step 4의 템플릿 빌드(1.6.0 해석)로 확인한다.
 
-- [ ] **Step 4: 템플릿 핀 + 템플릿 앱 배선 (publish 뒤, 별도 레포)**
+- [x] **Step 4: 템플릿 핀 + 템플릿 앱 배선 (publish 뒤, 별도 레포)**
 
 ```bash
 cd $ROOT/demo-b-template
@@ -673,7 +673,7 @@ Expected: 4파일 변경, 빌드 통과(1.6.0 아티팩트 해석), CI `ok`. 플
 - Create: `demo-c-platform/platform-observability-starter/**`, `demo-c-platform/platform-resilience-starter/**`
 - Modify: `demo-c-platform/gradle/libs.versions.toml`, `settings.gradle.kts`, `platform-bom/build.gradle.kts`, `platform-catalog/build.gradle.kts`, `templates/multi-service/gradle.properties`, `templates/multi-service/.github/workflows/release.yml`, `templates/multi-service/apps/{api,admin}/build.gradle.kts`
 
-- [ ] **Step 1: 브랜치, 카탈로그 버전, 스타터 소스 복사, BOM·카탈로그(`cplatform`)**
+- [x] **Step 1: 브랜치, 카탈로그 버전, 스타터 소스 복사, BOM·카탈로그(`cplatform`)**
 
 ```bash
 cd $ROOT/demo-c-platform && git checkout -q -b observability-resilience-starters
@@ -689,7 +689,7 @@ grep -c 'starter' platform-bom/build.gradle.kts platform-catalog/build.gradle.kt
 ```
 Expected: bom 3, catalog 3, settings 3. Task 2에서 Step 9b를 탔다면 toml의 resilience4j 두 줄은 넣지 않는다.
 
-- [ ] **Step 2: 템플릿 핀과 템플릿 앱 배선 (같은 PR)**
+- [x] **Step 2: 템플릿 핀과 템플릿 앱 배선 (같은 PR)**
 
 ```bash
 cd $ROOT/demo-c-platform/templates/multi-service
@@ -701,7 +701,7 @@ cd $ROOT/demo-c-platform && git status --short | wc -l
 ```
 Expected: 변경 파일 수 = 기존 4(toml, settings, bom, catalog) + 템플릿 4 + 새 모듈 파일들.
 
-- [ ] **Step 3: 빌드·publishToMavenLocal 검증**
+- [x] **Step 3: 빌드·publishToMavenLocal 검증**
 
 ```bash
 cd $ROOT/demo-c-platform && ./gradlew build publishToMavenLocal -PplatformVersion=0.0.0-LOCAL --console=plain -q 2>&1 | grep -E 'FAIL|error:' || echo "build ok"
@@ -709,7 +709,7 @@ ls ~/.m2/repository/io/github/khkim6040/cplatform/ | tr '\n' ' '
 ```
 Expected: exit 0, 두 새 스타터 디렉터리.
 
-- [ ] **Step 4: 커밋 → PR → 태그 → publish 대기**
+- [x] **Step 4: 커밋 → PR → 태그 → publish 대기**
 
 ```bash
 cd $ROOT/demo-c-platform
@@ -731,7 +731,7 @@ Expected: PR(#6 예상), publish `ok`. 아티팩트 존재는 Task 5 Step 6의 c
 **Interfaces:**
 - Consumes: Task 1의 `commons-lang3` 줄, Task 2~4의 `v1.6.0`.
 
-- [ ] **Step 1: A contract — v1.5.0 되돌림을 다시 되돌림(재올림 비용)**
+- [x] **Step 1: A contract — v1.5.0 되돌림을 다시 되돌림(재올림 비용)**
 
 실험 8의 함정: revert된 머지 위에 `v1.6.0`을 머지하면 v1.5.0 내용(graceful)은 돌아오지 않는다. 먼저 revert 커밋을 revert한다.
 
@@ -741,7 +741,7 @@ grep -c 'graceful' platform/http-starter/src/main/resources/platform-defaults.ym
 ```
 Expected: 커밋 `Revert "Revert "Merge tag 'v1.5.0'""`, graceful 1.
 
-- [ ] **Step 2: A contract — `v1.6.0` 머지, 충돌 확인**
+- [x] **Step 2: A contract — `v1.6.0` 머지, 충돌 확인**
 
 ```bash
 cd $ROOT/demo-a-contract && git fetch -q upstream tag v1.6.0 --no-tags
@@ -750,7 +750,7 @@ git diff --name-only --diff-filter=U
 ```
 Expected: `CONFLICT (content): Merge conflict in apps/api/build.gradle.kts`, 충돌 파일 목록 정확히 1개. (admin은 프로젝트가 안 건드렸으므로 깨끗히 들어온다.) 충돌이 0이면 그대로 기록하고 관찰에 이유를 적는다.
 
-- [ ] **Step 3: A contract — 양쪽 유지로 해소**
+- [x] **Step 3: A contract — 양쪽 유지로 해소**
 
 마커를 지우고 세 줄을 모두 남긴다. 결과 `dependencies` 블록:
 
@@ -775,7 +775,7 @@ git diff --stat HEAD~1 HEAD | tail -1
 ```
 Expected: 마커 0, `implementation(` 5. 머지 커밋 `Merge tag 'v1.6.0'`. 마지막 줄의 파일 수가 "들어온 파일 수"(새 모듈 + toml + settings + api/admin + README).
 
-- [ ] **Step 4: A contract — 빌드·기동 검증·push·CI**
+- [x] **Step 4: A contract — 빌드·기동 검증·push·CI**
 
 ```bash
 cd $ROOT/demo-a-contract && ./gradlew clean build --console=plain -q 2>&1 | grep -E 'FAIL|error:' || echo "build ok"; tests_total .
@@ -788,7 +788,7 @@ git push -q origin main && run_wait demo-a-contract ci
 ```
 Expected: 빌드 통과, 테스트 수 실측(스타터 테스트 5개 추가). `read-timeout: 3s`(위반 유지) + `shutdown: graceful`(재올림). `observability` ≥ 1, `resilience` ≥ 1. `health 200`, `prom-app-tag` ≥ 1, `cb 200`, `traced-log-lines` ≥ 1, `export-errors 0`. CI `ok`. 프로젝트 측 단계: ① revert-of-revert ② 태그 머지 + 충돌 1파일 해소 ③ push → CI = **3단계**, 손댄 파일 1.
 
-- [ ] **Step 5: B contract — 숫자 1줄 + 앱 의존성 3줄**
+- [x] **Step 5: B contract — 숫자 1줄 + 앱 의존성 3줄**
 
 ```bash
 cd $ROOT/demo-b-contract
@@ -806,7 +806,7 @@ run_wait demo-b-contract ci
 ```
 Expected: 3파일 변경, 빌드 통과(테스트 수 실측, 스타터 테스트는 아티팩트라 포함 안 됨), `observability 1`·`resilience` ≥ 1, probe 전 항목 통과, CI `ok`. 프로젝트 측: **1단계**, 손댄 파일 3, 충돌 0. 함께 끌려온 변경: 1.4.0(Dockerfile, Maven 아티팩트엔 영향 없음)·1.5.0(graceful 기본값) — 실험 8에서 되돌렸던 graceful이 이번 올림으로 다시 들어온다(1).
 
-- [ ] **Step 6: C contract — B와 동일**
+- [x] **Step 6: C contract — B와 동일**
 
 ```bash
 cd $ROOT/demo-c-contract
@@ -831,7 +831,7 @@ Expected: B와 같다(`cplatform` 아티팩트).
 **Files:**
 - Modify: `demo-a-claims` (`v1.6.0` 머지 커밋), `demo-{b,c}-claims/gradle.properties`, `apps/api/build.gradle.kts`, `apps/admin/build.gradle.kts`
 
-- [ ] **Step 1: A claims — 태그 머지(충돌 0 예상)·검증·push**
+- [x] **Step 1: A claims — 태그 머지(충돌 0 예상)·검증·push**
 
 ```bash
 cd $ROOT/demo-a-claims && git fetch -q upstream tag v1.6.0 --no-tags && git merge --no-edit v1.6.0 2>&1 | tail -2
@@ -843,7 +843,7 @@ git push -q origin main && run_wait demo-a-claims ci
 ```
 Expected: 충돌 0(claims는 빌드 파일을 안 건드렸으므로 api·admin 배선이 그대로 들어온다), 들어온 파일 수 실측. `observability` ≥ 1, `resilience` ≥ 1, `health 200`, `cb 200`(traced-log-lines는 DEBUG를 안 켰으므로 0이어도 됨), `export-errors 0`. CI `ok`. 프로젝트 측: **1단계**, 손댄 파일 0.
 
-- [ ] **Step 2: B claims — 3파일**
+- [x] **Step 2: B claims — 3파일**
 
 ```bash
 cd $ROOT/demo-b-claims
@@ -859,7 +859,7 @@ run_wait demo-b-claims ci
 ```
 Expected: 3파일, 빌드 통과, deps 둘 다 ≥ 1, `health 200`·`cb 200`·`export-errors 0`, CI `ok`. 프로젝트 측 **1단계**, 손댄 파일 3. A와 달리 손댄 파일 0이 아니다: B/C에서 "새 스타터 채택"은 프로젝트가 앱마다 한 줄을 적는 opt-in이고, A에서는 플랫폼의 앱 빌드 파일이 머지로 들어오는 자동 적용이다(관찰에 적는다).
 
-- [ ] **Step 3: C claims — B와 동일**
+- [x] **Step 3: C claims — B와 동일**
 
 ```bash
 cd $ROOT/demo-c-claims
@@ -875,7 +875,7 @@ run_wait demo-c-claims ci
 ```
 Expected: B와 같다.
 
-- [ ] **Step 4: 최종 상태 점검**
+- [x] **Step 4: 최종 상태 점검**
 
 ```bash
 cd $ROOT
@@ -894,7 +894,7 @@ Expected: 모두 `dirty=0 ahead=0`, B/C 프로젝트·템플릿 모두 `1.6.0`.
 - Create: `insurance-platform-poc/experiments/10-new-common-feature.md`
 - Modify: `insurance-platform-poc/docs/superpowers/plans/2026-10-25-phase6-observability-resilience-exp10.md` (체크박스)
 
-- [ ] **Step 1: 기록 작성**
+- [x] **Step 1: 기록 작성**
 
 `experiments/10-new-common-feature.md`. 아래 표의 꺾쇠(`<…>`)는 Task 1~6에서 실측한 값으로 바꿔 쓴다. 꺾쇠가 남아 있으면 커밋하지 않는다.
 
@@ -935,7 +935,7 @@ Expected: 모두 `dirty=0 ahead=0`, B/C 프로젝트·템플릿 모두 `1.6.0`.
 - <실행 중 드러난 추가 관찰>
 ```
 
-- [ ] **Step 2: 꺾쇠 잔존 확인과 커밋**
+- [x] **Step 2: 꺾쇠 잔존 확인과 커밋**
 
 ```bash
 cd $ROOT/insurance-platform-poc
@@ -944,7 +944,7 @@ git add experiments/10-new-common-feature.md && git commit -q -m "Record experim
 ```
 Expected: 꺾쇠 0.
 
-- [ ] **Step 3: 계획 체크박스 모두 채우고 커밋**
+- [x] **Step 3: 계획 체크박스 모두 채우고 커밋**
 
 ```bash
 cd $ROOT/insurance-platform-poc
