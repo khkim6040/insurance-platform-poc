@@ -98,7 +98,7 @@ actuator_probe() {
   printf 'health %s\n' "$(curl -s -o /dev/null -w '%{http_code}' localhost:8080/actuator/health)"
   printf 'prom-app-tag %s\n' "$(curl -s localhost:8080/actuator/prometheus | grep http_server_requests_seconds_count | grep -c 'application="api"')"
   printf 'cb %s\n' "$(curl -s -o /dev/null -w '%{http_code}' localhost:8080/actuator/circuitbreakers)"
-  printf 'traced-log-lines %s\n' "$(grep -cE '\[api,[0-9a-f]{32},[0-9a-f]{16}\]' $S/api.log)"
+  printf 'traced-log-lines %s\n' "$(grep -cE '\[[0-9a-f]{32}-[0-9a-f]{16}\]' $S/api.log)"
   printf 'export-errors %s\n' "$(grep -ci 'failed to export\|connection refused' $S/api.log)"
 }
 # api runtimeClasspath에 두 스타터가 들어왔는지. 출력: observability <n> / resilience <n>
@@ -109,7 +109,7 @@ deps_has() {
 }
 ```
 
-`traced-log-lines`는 요청 범위 로그가 있어야 1 이상이므로, 검증 시 `api_up` 전에 `export LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET=DEBUG`를 하고 끝난 뒤 `unset` 한다(Boot는 Micrometer Tracing이 classpath에 있으면 콘솔 패턴에 `[app,traceId,spanId]`를 넣는다).
+`traced-log-lines`는 요청 범위 로그가 있어야 1 이상이므로, 검증 시 `api_up` 전에 `export LOGGING_LEVEL_WEB=DEBUG`를 하고 끝난 뒤 `unset` 한다(Boot는 Micrometer Tracing이 classpath에 있으면 콘솔 패턴에 `[traceId-spanId]` 49자 필드를 넣는다. 로거 이름은 환경변수로 넘기면 소문자로 바인딩되므로 로그 그룹 `web`을 쓴다).
 
 - [ ] **Step 3: 함수 로드 확인**
 
@@ -574,9 +574,9 @@ class PlatformResilienceStarterTest {
 
 ```bash
 cd $ROOT/demo-a-platform && ./gradlew build --console=plain -q 2>&1 | grep -E 'FAIL|error:' || echo "build ok"; tests_total .
-export LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET=DEBUG
+export LOGGING_LEVEL_WEB=DEBUG
 api_up $ROOT/demo-a-platform && actuator_probe; api_down
-unset LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET
+unset LOGGING_LEVEL_WEB
 ```
 Expected: 빌드 통과, 테스트 총수(이전 25 + 5 = 30 근처, 실측 기록). `health 200`, `prom-app-tag` ≥ 1, `cb 200`(9b면 404), `traced-log-lines` ≥ 1, `export-errors 0`. `prom-app-tag`가 0이면 `management.observations.key-values`가 http.server.requests에 안 붙은 것이므로 멈추고 보고한다.
 
@@ -781,9 +781,9 @@ Expected: 마커 0, `implementation(` 5. 머지 커밋 `Merge tag 'v1.6.0'`. 마
 cd $ROOT/demo-a-contract && ./gradlew clean build --console=plain -q 2>&1 | grep -E 'FAIL|error:' || echo "build ok"; tests_total .
 grep -n 'read-timeout\|shutdown' platform/http-starter/src/main/resources/platform-defaults.yml
 deps_has .
-export LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET=DEBUG
+export LOGGING_LEVEL_WEB=DEBUG
 api_up . && actuator_probe; api_down
-unset LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET
+unset LOGGING_LEVEL_WEB
 git push -q origin main && run_wait demo-a-contract ci
 ```
 Expected: 빌드 통과, 테스트 수 실측(스타터 테스트 5개 추가). `read-timeout: 3s`(위반 유지) + `shutdown: graceful`(재올림). `observability` ≥ 1, `resilience` ≥ 1. `health 200`, `prom-app-tag` ≥ 1, `cb 200`, `traced-log-lines` ≥ 1, `export-errors 0`. CI `ok`. 프로젝트 측 단계: ① revert-of-revert ② 태그 머지 + 충돌 1파일 해소 ③ push → CI = **3단계**, 손댄 파일 1.
@@ -798,9 +798,9 @@ perl -pi -e 's|^(    implementation\(libs\.platform\.http\.starter\))$|$1\n    i
 git status --short
 ./gradlew clean build --console=plain -q 2>&1 | grep -E 'FAIL|error:' || echo "build ok"; tests_total .
 deps_has .
-export LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET=DEBUG
+export LOGGING_LEVEL_WEB=DEBUG
 api_up . && actuator_probe; api_down
-unset LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET
+unset LOGGING_LEVEL_WEB
 git add -A && git commit -q -m "Take platform 1.6.0 and add observability and resilience starters" && git push -q origin main && git log --oneline -1
 run_wait demo-b-contract ci
 ```
@@ -816,9 +816,9 @@ perl -pi -e 's|^(    implementation\(libs\.platform\.http\.starter\))$|$1\n    i
 git status --short
 ./gradlew clean build --console=plain -q 2>&1 | grep -E 'FAIL|error:' || echo "build ok"; tests_total .
 deps_has .
-export LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET=DEBUG
+export LOGGING_LEVEL_WEB=DEBUG
 api_up . && actuator_probe; api_down
-unset LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SERVLET_DISPATCHERSERVLET
+unset LOGGING_LEVEL_WEB
 git add -A && git commit -q -m "Take platform 1.6.0 and add observability and resilience starters" && git push -q origin main && git log --oneline -1
 run_wait demo-c-contract ci
 ```
@@ -903,7 +903,7 @@ Expected: 모두 `dirty=0 ahead=0`, B/C 프로젝트·템플릿 모두 `1.6.0`.
 
 ## 시나리오와 성공 기준
 
-플랫폼이 `observability-starter`(Actuator, Micrometer Prometheus, OpenTelemetry tracing, 기본 프로퍼티)와 `resilience-starter`(Resilience4j CB·Retry 기본 설정)를 추가해 `v1.6.0`으로 내고, contract·claims 여섯 프로젝트가 받는다. 스펙 5.4가 예상한 충돌 지점(프로젝트의 의존성 추가 vs 플랫폼의 스타터 추가)을 실제로 만들기 위해 세 contract는 먼저 `apps/api/build.gradle.kts`에 `commons-lang3` 한 줄을 넣었다(A에서는 소유권 규약 위반, 스펙이 명시한 측정 지점). claims는 손대지 않은 프로젝트의 경로다. 측정은 관측성으로 한다: `/actuator/health` 200, `/actuator/prometheus`의 `http_server_requests`에 `application="api"` 태그, `/actuator/circuitbreakers` 200, 요청 범위 로그 줄에 `[api,traceId,spanId]`.
+플랫폼이 `observability-starter`(Actuator, Micrometer Prometheus, OpenTelemetry tracing, 기본 프로퍼티)와 `resilience-starter`(Resilience4j CB·Retry 기본 설정)를 추가해 `v1.6.0`으로 내고, contract·claims 여섯 프로젝트가 받는다. 스펙 5.4가 예상한 충돌 지점(프로젝트의 의존성 추가 vs 플랫폼의 스타터 추가)을 실제로 만들기 위해 세 contract는 먼저 `apps/api/build.gradle.kts`에 `commons-lang3` 한 줄을 넣었다(A에서는 소유권 규약 위반, 스펙이 명시한 측정 지점). claims는 손대지 않은 프로젝트의 경로다. 측정은 관측성으로 한다: `/actuator/health` 200, `/actuator/prometheus`의 `http_server_requests`에 `application="api"` 태그, `/actuator/circuitbreakers` 200, 요청 범위 로그 줄에 `[traceId-spanId]`.
 
 ## 결과
 
