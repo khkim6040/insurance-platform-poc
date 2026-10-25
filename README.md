@@ -5,6 +5,7 @@
 - 스펙: `docs/superpowers/specs/`
 - 구현 계획: `docs/superpowers/plans/`
 - 실험 기록과 Phase 완료 기록: `experiments/`
+- 최종 보고서: `report/final.md`
 - 도구: `tools/bootstrap-repos.sh`(레포 생성), `tools/stub-server.py`(외부 API 스텁)
 
 비교 대상 레포: `demo-a-platform`/`demo-a-contract`, `demo-b-platform`/`demo-b-template`/`demo-b-contract`, `demo-c-platform`/`demo-c-contract` (모두 `khkim6040` 계정).
